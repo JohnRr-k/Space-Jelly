@@ -1,0 +1,54 @@
+/*
+ * ASCENSION design tokens.
+ *
+ * One theme, deliberately: deep near-black surfaces with a single champagne
+ * accent. Dark suits both ends of the ritual — a 05:30 protocol and a 22:00
+ * wind-down — and restraint is the premium signal. No component may invent
+ * a color; everything derives from these tokens.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg: #0a0b0d;
+  --bg-raised: #13151a;
+  --bg-overlay: #1b1e25;
+  --bg-press: #21242c;
+
+  /* Hairlines */
+  --line: rgba(255, 255, 255, 0.06);
+  --line-strong: rgba(255, 255, 255, 0.13);
+
+  /* Text */
+  --text: #eceef0;
+  --text-dim: #9aa0ab;
+  --text-faint: #616570;
+
+  /* Identity accent — champagne gold */
+  --gold: #c9a86a;
+  --gold-bright: #e2c690;
+  --gold-soft: rgba(201, 168, 106, 0.13);
+  --gold-line: rgba(201, 168, 106, 0.38);
+  --gold-ink: #17130b;
+
+  /* Type */
+  --font-body:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  --font-display:
+    "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+    "Times New Roman", serif;
+
+  /* Shape & rhythm */
+  --radius-lg: 22px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --pad-card: 20px;
+  --shell-max: 480px;
+
+  --shadow-card:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 14px 34px rgba(0, 0, 0, 0.35);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
