@@ -370,9 +370,19 @@ button.chip:hover { border-color: var(--ink-4); color: var(--ink); }
 .grid--3 { grid-template-columns: repeat(auto-fill, minmax(288px, 1fr)); }
 .grid--4 { grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); }
 
-/* the plate: a record's generated photographic field */
-.plate { position: relative; overflow: hidden; background: var(--paper-sunk); }
-.plate canvas { width: 100%; height: 100%; object-fit: cover; }
+/* the plate: a record's photograph, or a generated field until it has one */
+/* grid so the generated plate and a real photograph can overlay in one
+   cell — the plate stays behind while the image decodes, and remains as a
+   backdrop when the photograph is too small to fill the frame */
+.plate { position: relative; overflow: hidden; background: var(--paper-sunk); display: grid; }
+.plate > canvas, .plate > img { grid-area: 1 / 1; width: 100%; height: 100%; object-fit: cover; }
+.plate--natural, .plate--natural > canvas, .plate--natural > img { height: auto; }
+.plate__count {
+  position: absolute; right: 8px; bottom: 8px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .06em;
+  color: #fff; background: rgba(12,11,10,.55); padding: 2px 6px; border-radius: 2px;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
 .plate::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(180deg, transparent 45%, rgba(12,11,10,.55) 100%);
@@ -552,14 +562,63 @@ button.chip:hover { border-color: var(--ink-4); color: var(--ink); }
 @media (max-width: 1180px) { .masonry { columns: 3; } }
 @media (max-width: 780px)  { .masonry { columns: 2; } }
 .shot { position: relative; display: block; width: 100%; overflow: hidden; background: var(--paper-sunk); }
-.shot canvas { width: 100%; height: auto; transition: transform var(--slow) var(--ease); }
-.shot:hover canvas { transform: scale(1.03); }
+.shot canvas, .shot img { width: 100%; height: auto; transition: transform var(--slow) var(--ease); }
+.shot:hover canvas, .shot:hover img { transform: scale(1.03); }
+.shot .plate { background: none; }
 .shot__cap {
   position: absolute; inset: auto 0 0 0; padding: 22px 12px 11px;
   background: linear-gradient(0deg, rgba(10,9,8,.72), transparent);
   color: #fff; font-size: var(--t-sm); opacity: 0; transition: opacity var(--med) var(--ease);
 }
 .shot:hover .shot__cap { opacity: 1; }
+
+/* ── drop target · drag a photograph anywhere onto a record ─────────── */
+.rec { position: relative; }
+.rec[data-drop="1"]::after {
+  content: "Drop to attach"; position: absolute; inset: -14px;
+  border: 1px dashed var(--brass); border-radius: var(--radius);
+  background: color-mix(in srgb, var(--brass) 7%, transparent);
+  display: grid; place-items: start center; padding-top: 26px;
+  font-family: var(--mono); font-size: var(--t-xs); letter-spacing: .14em;
+  text-transform: uppercase; color: var(--brass);
+  pointer-events: none; z-index: 5;
+}
+
+/* ── prev / next · a module is a sequence, so let it be walked ───────── */
+.stepper { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-top: 46px; }
+.step { background: var(--paper); padding: 20px 22px; display: grid; gap: 5px; min-height: 88px; align-content: center; transition: background var(--fast) var(--ease); }
+.step:hover { background: var(--paper-sunk); }
+.step--next { text-align: right; }
+.step b { font-family: var(--serif); font-size: 1.0625rem; font-weight: 400; letter-spacing: -.006em; }
+.step__k { display: flex; align-items: center; gap: 7px; color: var(--ink-4); }
+.step--next .step__k { justify-content: flex-end; }
+.step--empty { color: var(--ink-4); pointer-events: none; }
+
+/* ── statistics ─────────────────────────────────────────────────────── */
+.figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.figure { background: var(--paper); padding: 24px 22px; display: grid; gap: 6px; }
+.figure b { font-family: var(--serif); font-size: clamp(2rem, 3.4vw, 2.75rem); font-weight: 400; line-height: 1; letter-spacing: -.022em; font-variant-numeric: tabular-nums; }
+.figure span { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-4); }
+.figure em { font-style: normal; font-size: var(--t-sm); color: var(--ink-3); }
+
+.bars { display: flex; align-items: flex-end; gap: 3px; height: 190px; padding-top: 12px; }
+.bar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 7px; min-width: 0; height: 100%; }
+.bar i { display: block; width: 100%; background: var(--ink-4); opacity: .45; transition: opacity var(--fast) var(--ease), background var(--fast) var(--ease); min-height: 1px; }
+.bar:hover i, .bar[data-peak="1"] i { background: var(--brass); opacity: 1; }
+.bar span { font-family: var(--mono); font-size: 9px; color: var(--ink-4); writing-mode: vertical-rl; transform: rotate(180deg); }
+.bar__v { position: absolute; }
+
+.moodbar { display: flex; height: 26px; border: 1px solid var(--rule); overflow: hidden; }
+.moodbar i { display: block; height: 100%; }
+.moodkey { display: flex; flex-wrap: wrap; gap: 6px 16px; padding-top: 14px; }
+
+.tally { display: grid; gap: 9px; }
+.tallyrow { display: grid; grid-template-columns: 150px 1fr 44px; gap: 14px; align-items: center; }
+.tallyrow i { display: block; height: 7px; background: var(--brass); opacity: .7; min-width: 2px; }
+.tallyrow:hover i { opacity: 1; }
+
+/* a quiet mark on Settings when the archive has not been exported lately */
+.nav-item__flag { width: 6px; height: 6px; border-radius: 50%; background: var(--brass); flex: none; }
 
 /* ═══ overlay · immersive record ═════════════════════════════════════ */
 .scrim {
@@ -710,6 +769,10 @@ button.chip:hover { border-color: var(--ink-4); color: var(--ink); }
   .grid--3, .grid--4 { grid-template-columns: 1fr; }
   .masonry { columns: 2; column-gap: 6px; }
   .row { grid-template-columns: 1fr; gap: 6px; }
+  .stepper { grid-template-columns: 1fr; }
+  .step--next { text-align: left; }
+  .step--next .step__k { justify-content: flex-start; }
+  .tallyrow { grid-template-columns: 96px 1fr 34px; gap: 8px; }
   .row__aside { justify-content: flex-start; }
 }
 </style>
@@ -1335,6 +1398,7 @@ const Store = {
     return JSON.stringify({ ...this.state, exportedAt: new Date().toISOString(), app: 'LEGACY' }, null, 2);
   },
   download() {
+    this.setPref('lastExport', new Date().toISOString());
     const blob = new Blob([this.snapshot()], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = el('a', { href: url, download: `legacy-archive-${iso(new Date())}.json` });
@@ -1349,7 +1413,8 @@ const Store = {
     const years = new Set(recs.map(r => yearOf(dateOf(r))).filter(Boolean));
     let bytes = 0;
     try { bytes = new Blob([localStorage.getItem(STORAGE_KEY) || '']).size; } catch {}
-    return { records: recs.length, words, years: years.size, bytes };
+    const photos = recs.reduce((n, r) => n + (r.photos || []).length, 0);
+    return { records: recs.length, words, years: years.size, bytes, photos };
   },
 };
 
@@ -1565,6 +1630,48 @@ function plate(seed, { ratio = 0.66, mood = null, shade = false, cls = '' } = {}
 }
 function recordPlate(rec, opts = {}) {
   return plate(rec.id, { mood: rec.mood || null, ...opts });
+}
+
+/**
+ * A record's imagery: its own photograph when it has one, the generated
+ * plate until then. The canvas paints immediately and is only removed once
+ * the real image has decoded, so nothing ever flashes empty.
+ */
+function plateFor(rec, { ratio = 0.66, shade = false, cls = '', natural = false } = {}) {
+  const wrap = plate(rec.id, {
+    ratio, mood: rec.mood || null, shade,
+    cls: [cls, natural ? 'plate--natural' : ''].filter(Boolean).join(' '),
+  });
+  const ids = rec.photos || [];
+  if (!ids.length) return wrap;
+  Assets.url(ids[0]).then((url) => {
+    if (!url) return;
+    const img = el('img', { src: url, alt: '', decoding: 'async' });
+    img.addEventListener('load', () => {
+      /* Never upscale a small photograph into a blurred hero. If it cannot
+         fill the frame honestly, contain it and leave the plate behind. */
+      const box = wrap.clientWidth;
+      const tooSmall = !natural && box && img.naturalWidth && img.naturalWidth < box * 0.75;
+      if (tooSmall) img.style.objectFit = 'contain';
+      else wrap.querySelector('canvas')?.remove();
+    }, { once: true });
+    wrap.appendChild(img);
+    if (ids.length > 1) wrap.appendChild(el('span.plate__count', `${ids.length} photographs`));
+  });
+  return wrap;
+}
+
+/** Save dropped or picked files and attach them to a record. */
+async function attachPhotos(rec, files) {
+  const saved = [];
+  for (const file of files) {
+    if (!file.type.startsWith('image/')) continue;
+    const id = await Assets.save(file);
+    if (id) saved.push(id);
+  }
+  if (!saved.length) return 0;
+  Store.patch(rec.id, { photos: [...(rec.photos || []), ...saved] });
+  return saved.length;
 }
 function avatar(rec, size = 56) {
   const initials = titleOf(rec).split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
@@ -2191,8 +2298,7 @@ function recordCard(rec, { plateRatio = 0.75, showPlate = true } = {}) {
   const s = SCHEMA[rec.type];
   const body = bodyOf(rec) || rec.role || rec.subtitle || rec.note || '';
   return el('a', { class: 'card', href: routeOf(rec) },
-    showPlate && el('div', { class: 'plate card__plate' + (rec.favourite ? ' plate--shade' : '') },
-      recordPlate(rec, { ratio: plateRatio }).firstChild),
+    showPlate && plateFor(rec, { ratio: plateRatio, shade: rec.favourite, cls: 'card__plate' }),
     rec.favourite ? el('span.card__fav', icon('heart', 15)) : null,
     el('span.meta', [fmtDate(dateOf(rec), 'day'), yearOf(dateOf(rec))].filter(Boolean).join(' · ') || s.label),
     el('span.card__title', titleOf(rec)),
@@ -2664,7 +2770,7 @@ function viewHome() {
         sectionHead('Kept close', `${favs.length} records`),
         el('div.strip', ...favs.map(f =>
           el('a', { href: routeOf(f), title: titleOf(f), style: { display: 'block', position: 'relative' } },
-            recordPlate(f, { ratio: 1, shade: true }),
+            plateFor(f, { ratio: 1, shade: true }),
             el('span', { class: 'shot__cap', style: { opacity: 1 } }, titleOf(f))))));
     })(),
   );
@@ -2967,7 +3073,7 @@ function viewGallery() {
     .sort(byDateDesc);
 
   const shot = (r, ratio) => el('a.shot', { href: routeOf(r), title: titleOf(r) },
-    recordPlate(r, { ratio }).firstChild,
+    plateFor(r, { ratio, natural: true }),
     el('span.shot__cap',
       el('div', { style: { fontFamily: 'var(--serif)', fontSize: '1rem' } }, titleOf(r)),
       el('div', { class: 'meta', style: { color: 'rgba(255,255,255,.72)' } },
@@ -2990,13 +3096,36 @@ function viewGallery() {
     }));
   } else {
     body = el('div.masonry', ...withImagery.map((r, i) => shot(r, [0.72, 1, 1.32, 0.86, 1.12][i % 5])));
+    /* Records show their first photograph in `shot`; the rest of a record's
+       photographs belong in the contact sheet too. Appended as they decode
+       so a large archive never blocks the first paint. */
+    (async () => {
+      for (const r of withImagery) {
+        for (const pid of (r.photos || []).slice(1)) {
+          const url = await Assets.url(pid);
+          if (!url || !body.isConnected) continue;
+          body.appendChild(el('a.shot', { href: routeOf(r), title: titleOf(r) },
+            el('img', { src: url, alt: '', decoding: 'async',
+              style: { width: '100%', height: 'auto' } }),
+            el('span.shot__cap',
+              el('div', { style: { fontFamily: 'var(--serif)', fontSize: '1rem' } }, titleOf(r)),
+              el('div', { class: 'meta', style: { color: 'rgba(255,255,255,.72)' } },
+                fmtDate(dateOf(r), 'short')))));
+        }
+      }
+    })();
   }
 
   const modeBtn = (key, label) => el('button.chip', { 'aria-pressed': GAL_STATE.mode === key ? 'true' : 'false',
     onclick: () => { GAL_STATE.mode = key; Router.refresh(); } }, label);
 
   return el('div.stagger',
-    pageHead('Gallery', 'Every record carries a plate — a generated field seeded by the record itself, replaced the moment you attach a real photograph.'),
+    pageHead('Gallery', (() => {
+      const n = Store.stats().photos;
+      return n
+        ? `${n} photograph${n === 1 ? '' : 's'} attached. Records without one show a generated plate, seeded by the record itself.`
+        : 'Every record carries a plate — a generated field seeded by the record itself, replaced the moment you attach a real photograph.';
+    })()),
     el('div.filterbar', modeBtn('all', 'Everything'), modeBtn('year', 'By year'), modeBtn('people', 'By person')),
     body);
 }
@@ -3181,7 +3310,7 @@ function viewPlaces() {
       + (exaggeration > 1.1 ? ` · latitude stretched ×${exaggeration.toFixed(1)} to fill the frame` : '')
       + ' · the brass line is the order you first arrived'),
     el('div.grid.grid--3', ...all.map(p => el('a.card', { href: routeOf(p) },
-      el('div', { class: 'plate card__plate' }, recordPlate(p, { ratio: 0.62 }).firstChild),
+      plateFor(p, { ratio: 0.62, cls: 'card__plate' }),
       el('span.meta', [p.region, p.kind].filter(Boolean).join('  ·  ')),
       el('span.card__title', p.name),
       p.note ? el('span.card__excerpt', p.note) : null,
@@ -3420,7 +3549,7 @@ function viewSettings() {
   return el('div.stagger',
     pageHead('Settings', 'This archive lives in this browser and nowhere else. Nothing is uploaded, and nothing leaves unless you export it.'),
 
-    block('Identity', 'Everything on the home screen is computed from these two fields.',
+    block('Identity', 'Your name and birthdate drive the greeting, your age, and every week in the Life in Weeks grid.',
       el('div.form__grid',
         el('div.field', el('label', 'Name'),
           el('input.input', { value: id.name || '', placeholder: 'Your name',
@@ -3440,6 +3569,19 @@ function viewSettings() {
       el('div.filterbar', themeBtn('light', 'Daylight', 'sun'), themeBtn('dark', 'Nocturne', 'moon'), themeBtn('auto', 'Follow system', 'auto'))),
 
     block('The archive', `${stats.records.toLocaleString()} records · ${stats.words.toLocaleString()} words written · ${stats.years} years covered · ${(stats.bytes / 1024).toFixed(0)} KB stored`,
+      (() => {
+        const days = backupAge();
+        const overdue = days === null || days > BACKUP_DAYS;
+        return el('div', { class: 'notice', style: overdue ? {} : { borderColor: 'var(--rule)', background: 'var(--paper-sunk)' } },
+          icon(overdue ? 'download' : 'check', 17, overdue ? 'brass' : 'dim'),
+          el('div', el('p',
+            days === null
+              ? el('b', 'This archive has never been exported. ')
+              : el('b', `Last exported ${days === 0 ? 'today' : days === 1 ? 'yesterday' : `${days} days ago`}. `),
+            overdue
+              ? 'It lives in this browser only. Clearing site data, or opening the file from a different folder, loses it. Export now and keep the file somewhere you back up.'
+              : 'Keep that file somewhere you actually back up.')));
+      })(),
       el('div.filterbar',
         el('button.btn', { onclick: () => { Store.download(); Toast.show('Archive exported as JSON.'); } }, icon('download', 14), 'Export everything'),
         el('button.btn', { onclick: () => importFile.click() }, icon('upload', 14), 'Import an archive'),
@@ -3531,8 +3673,7 @@ function viewRecord(type, id) {
         el('span.meta', rec.relation || ''),
         rec.met ? el('span.lead', `Known since ${fmtDate(rec.met, 'month')} — ${relTime(rec.met).replace(' ago', '')}`) : null)));
   } else if (!['letter', 'lesson', 'chapter', 'collection'].includes(rec.type)) {
-    main.push(el('div', { class: 'plate rec__hero' + (rec.type === 'place' ? '' : ' plate--shade') },
-      recordPlate(rec, { ratio: 0.42 }).firstChild));
+    main.push(plateFor(rec, { ratio: 0.42, shade: rec.type !== 'place', cls: 'rec__hero' }));
   }
 
   if (sealed) {
@@ -3599,19 +3740,67 @@ function viewRecord(type, id) {
         el('b', titleOf(r)))))));
   }
 
-  /* photographs, if any were attached */
-  if ((rec.photos || []).length) {
+  /* photographs — attachable here as well as in the composer */
+  if (PHOTO_TYPES.includes(rec.type)) {
     const strip = el('div.strip');
-    main.push(el('section', { style: { display: 'grid', gap: '12px' } }, el('h2.meta', 'Photographs'), strip));
+    const picker = el('input', { type: 'file', accept: 'image/*', multiple: true, style: { display: 'none' },
+      onchange: async (e) => {
+        const n = await attachPhotos(rec, [...e.target.files]);
+        e.target.value = '';
+        if (n) { Toast.show(`${n} photograph${n === 1 ? '' : 's'} attached.`); Router.refresh(); }
+      } });
+    main.push(el('section', { style: { display: 'grid', gap: '12px' } },
+      el('div', { style: { display: 'flex', alignItems: 'baseline', gap: '14px' } },
+        el('h2.meta', 'Photographs'),
+        el('button.btn.btn--ghost.btn--sm', { onclick: () => picker.click(), style: { marginLeft: 'auto' } },
+          icon('plus', 13), 'Attach')),
+      (rec.photos || []).length ? strip
+        : el('p', { class: 'dimmer', style: { fontSize: 'var(--t-ui)' } },
+            'None yet. Drag a photograph onto this page, or use Attach.'),
+      picker));
     (async () => {
-      for (const pid of rec.photos) {
+      for (const pid of rec.photos || []) {
         const url = await Assets.url(pid);
-        if (url) strip.appendChild(el('img', { src: url, alt: '', style: { width: '100%', aspectRatio: '1', objectFit: 'cover' } }));
+        if (!url) continue;
+        strip.appendChild(el('div', { style: { position: 'relative', background: 'var(--paper)' } },
+          el('img', { src: url, alt: '', style: { width: '100%', aspectRatio: '1', objectFit: 'cover' } }),
+          el('button.icobtn', { title: 'Remove this photograph',
+            style: { position: 'absolute', top: '4px', right: '4px', background: 'var(--paper-raised)', width: '24px', height: '24px' },
+            onclick: () => confirmSheet({
+              title: 'Remove this photograph?',
+              body: 'It is deleted from the archive. The record itself is untouched.',
+              confirm: 'Remove', danger: true,
+              onConfirm: () => {
+                Store.patch(rec.id, { photos: (rec.photos || []).filter(x => x !== pid) });
+                Assets.drop(pid); Router.refresh();
+              } }) }, icon('close', 13))));
       }
     })();
   }
 
-  return el('div.stagger',
+  /* A module is a sequence, so let it be walked without going back to the
+     list. Same order the module lists in — newest first. */
+  const siblings = Store.all(rec.type);
+  const at = siblings.findIndex(r => r.id === rec.id);
+  const newer = at > 0 ? siblings[at - 1] : null;
+  const older = at >= 0 && at < siblings.length - 1 ? siblings[at + 1] : null;
+  Router.siblings = { newer, older };
+
+  const step = (r, dir) => r
+    ? el('a', { class: 'step step--' + dir, href: routeOf(r) },
+        el('span', { class: 'step__k meta' },
+          dir === 'prev' ? icon('chevron', 12, 'dimmer') : null,
+          dir === 'prev' ? 'Newer  ·  K' : 'Older  ·  J',
+          dir === 'next' ? icon('chevron', 12, 'dimmer') : null),
+        el('b', titleOf(r)),
+        el('span.meta', fmtDate(dateOf(r), 'short')))
+    : el('div', { class: 'step step--' + dir + ' step--empty' },
+        el('span.meta', dir === 'prev' ? 'Nothing newer' : 'Nothing older'));
+
+  main.push(el('nav.stepper', { 'aria-label': `Other ${schema.plural.toLowerCase()}` },
+    step(newer, 'prev'), step(older, 'next')));
+
+  const page = el('div.stagger',
     el('div', { style: { paddingTop: '26px' } }),
     el('div.rec',
       el('aside.rec__apparatus',
@@ -3625,6 +3814,171 @@ function viewRecord(type, id) {
         ...appar,
         el('div.appar', el('span.appar__k', 'Catalogue'), el('span', { class: 'appar__v num', style: { fontSize: 'var(--t-sm)' } }, rec.id))),
       el('div.rec__main', ...main)));
+
+  /* Drag a photograph anywhere onto the record to attach it. */
+  if (PHOTO_TYPES.includes(rec.type)) {
+    const zone = page.querySelector('.rec');
+    let depth = 0;
+    const hasFiles = (e) => [...(e.dataTransfer?.types || [])].includes('Files');
+    zone.addEventListener('dragenter', (e) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault(); depth++; zone.dataset.drop = '1';
+    });
+    zone.addEventListener('dragover', (e) => { if (hasFiles(e)) e.preventDefault(); });
+    zone.addEventListener('dragleave', () => { if (--depth <= 0) { depth = 0; delete zone.dataset.drop; } });
+    zone.addEventListener('drop', async (e) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault(); depth = 0; delete zone.dataset.drop;
+      const n = await attachPhotos(rec, [...e.dataTransfer.files]);
+      if (n) { Toast.show(`${n} photograph${n === 1 ? '' : 's'} attached.`); Router.refresh(); }
+      else Toast.show('That was not an image file.');
+    });
+  }
+  return page;
+}
+
+/* ── STATISTICS ──────────────────────────────────────────────────────
+   A life measured, without becoming a dashboard. Every figure is a
+   sentence you could say out loud; the charts exist to show shape, not
+   to fill a grid with widgets.
+   ─────────────────────────────────────────────────────────────────── */
+function viewStats() {
+  const recs = Store.every();
+  const dated = recs.filter(r => dateOf(r)).sort(byDateAsc);
+  const stats = Store.stats();
+  const age = Life.age();
+
+  /* records per year, across the whole span the archive covers */
+  const perYear = new Map();
+  for (const r of dated) {
+    const y = yearOf(dateOf(r));
+    perYear.set(y, (perYear.get(y) || 0) + 1);
+  }
+  const years = [...perYear.keys()].sort((a, b) => a - b);
+  const first = years[0], last = years[years.length - 1];
+  const span = first && last ? Array.from({ length: last - first + 1 }, (_, i) => first + i) : [];
+  const peak = Math.max(1, ...perYear.values());
+  const densest = [...perYear.entries()].sort((a, b) => b[1] - a[1])[0];
+
+  /* the longest stretch with nothing filed */
+  let silence = null;
+  for (let i = 1; i < dated.length; i++) {
+    const gap = Math.round((toDate(dateOf(dated[i])) - toDate(dateOf(dated[i - 1]))) / DAY);
+    if (!silence || gap > silence.days) silence = { days: gap, from: dated[i - 1], to: dated[i] };
+  }
+
+  /* who turns up most often */
+  const tally = Store.all('person')
+    .map(p => ({ person: p, n: Store.related(p.id).length }))
+    .filter(x => x.n > 0).sort((a, b) => b.n - a.n);
+  const tallyMax = Math.max(1, ...tally.map(t => t.n));
+
+  /* the emotional weather of the archive */
+  const moods = {};
+  for (const r of recs) if (r.mood) moods[r.mood] = (moods[r.mood] || 0) + 1;
+  const moodTotal = Object.values(moods).reduce((a, b) => a + b, 0);
+  const moodOrder = Object.entries(moods).sort((a, b) => b[1] - a[1]);
+
+  const longest = recs
+    .map(r => ({ rec: r, n: String(bodyOf(r) || '').trim().split(/\s+/).filter(Boolean).length }))
+    .sort((a, b) => b.n - a.n)[0];
+
+  const lived = Store.all('experience').filter(e => e.status === 'lived');
+  const countries = new Set(Store.all('place').map(p => p.region).filter(Boolean));
+
+  const sentence = (...parts) => el('p.prose', { style: { maxWidth: '58ch' } }, ...parts);
+  const big = (n) => el('span', { class: 'num', style: { color: 'var(--ink)', fontFamily: 'var(--serif)', fontSize: '1.18em' } }, n);
+
+  return el('div.stagger',
+    pageHead('Statistics', 'What the archive knows when you ask it about itself. Numbers, not scores — nothing here is a target.'),
+
+    el('section.figures',
+      el('article.figure', el('b', stats.records.toLocaleString()), el('span', 'records'),
+        el('em', `across ${stats.years} year${stats.years === 1 ? '' : 's'}`)),
+      el('article.figure', el('b', stats.words.toLocaleString()), el('span', 'words written'),
+        el('em', `about ${Math.max(1, Math.round(stats.words / 250))} page${Math.round(stats.words / 250) === 1 ? '' : 's'}`)),
+      el('article.figure', el('b', Store.count('person').toString()), el('span', 'people'),
+        el('em', `${Store.all('person').filter(p => p.favourite).length} in the inner circle`)),
+      el('article.figure', el('b', Store.count('place').toString()), el('span', 'places'),
+        el('em', `${countries.size} countries & regions`)),
+      el('article.figure', el('b', lived.length.toString()), el('span', 'experiences lived'),
+        el('em', `${Store.all('experience').length - lived.length} still ahead`)),
+      el('article.figure', el('b', stats.photos.toLocaleString()), el('span', 'photographs'),
+        el('em', stats.photos ? 'attached to records' : 'none attached yet'))),
+
+    /* ── the shape of the archive ─────────────────────────────────── */
+    el('section', { style: { paddingTop: '52px' } },
+      sectionHead('Records by year', span.length ? `${first} — ${last}` : null),
+      span.length
+        ? el('div.bars', ...span.map(y => {
+            const n = perYear.get(y) || 0;
+            return el('button.bar', { title: `${y} — ${n} record${n === 1 ? '' : 's'}`,
+              'aria-label': `${y}, ${n} records`,
+              dataset: { peak: n === peak ? '1' : '0' },
+              onclick: () => go(`#/timeline?year=${y}`) },
+              el('i', { style: { height: (n / peak * 100) + '%' } }),
+              el('span', y % 5 === 0 || span.length < 14 ? String(y) : ''));
+          }))
+        : emptyNote('Nothing dated yet', 'Give a record a date and it appears here.')),
+
+    /* ── the emotional weather ────────────────────────────────────── */
+    moodTotal ? el('section', { style: { paddingTop: '52px' } },
+      sectionHead('Mood', `${moodTotal} records carry one`),
+      /* A 26px band reads far more saturated than a 6px dot, so the hue is
+         halved here and lightness alternates to keep the edges visible.
+         Width carries the information; colour only identifies. */
+      el('div.moodbar', ...moodOrder.map(([k, n], i) => {
+        const dark = Plates.isDark();
+        const L = (dark ? 30 : 74) + (i % 2 ? (dark ? 5 : -5) : 0);
+        return el('i', { title: `${MOODS[k].label} — ${n}`,
+          style: { width: (n / moodTotal * 100) + '%',
+            background: `hsl(${MOODS[k].hue} ${(MOODS[k].sat * 46).toFixed(0)}% ${L}%)` } });
+      })),
+      el('div.moodkey', ...moodOrder.map(([k, n]) =>
+        el('span', { class: 'meta', style: { display: 'flex', alignItems: 'center', gap: '6px' } },
+          el('span.chip__dot', { style: { background: `hsl(${MOODS[k].hue} ${MOODS[k].sat * 100}% 52%)` } }),
+          `${MOODS[k].label} ${n}`)))) : null,
+
+    /* ── the people who keep turning up ───────────────────────────── */
+    tally.length ? el('section', { style: { paddingTop: '52px' } },
+      sectionHead('Who is in your life, by the record', `${tally.length} people appear`),
+      el('div.tally', ...tally.slice(0, 10).map(t =>
+        el('a.tallyrow', { href: routeOf(t.person) },
+          el('span', { style: { fontFamily: 'var(--serif)', fontSize: 'var(--t-bd)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, t.person.name),
+          el('i', { style: { width: (t.n / tallyMax * 100) + '%' } }),
+          el('span.meta', String(t.n)))))) : null,
+
+    /* ── what the numbers actually say ────────────────────────────── */
+    el('section', { style: { paddingTop: '52px' } },
+      sectionHead('In sentences', null),
+      el('div', { style: { display: 'grid', gap: '16px' } },
+        Life.birth() ? sentence('You have been alive for ', big(age.total.toLocaleString()), ' days, and ',
+          big(dated.length.toLocaleString()), ' of them are written down. That is ',
+          big((dated.length / Math.max(1, age.total) * 100).toFixed(1) + '%'), ' — which sounds small, and is more than most people keep.') : null,
+        densest ? sentence('The densest year was ', big(densest[0]), ', with ', big(densest[1]),
+          ` record${densest[1] === 1 ? '' : 's'}. `,
+          Life.chapterAt(`${densest[0]}-06-15`) ? `That was ${Life.chapterAt(`${densest[0]}-06-15`).title.toLowerCase()}.` : '') : null,
+        silence && silence.days > 60 ? sentence('The longest silence is ', big(silence.days.toLocaleString()),
+          ' days — between ', el('a', { href: routeOf(silence.from), class: 'brass' }, titleOf(silence.from)),
+          ' and ', el('a', { href: routeOf(silence.to), class: 'brass' }, titleOf(silence.to)),
+          '. Gaps are part of the record too; the archive is not a streak.') : null,
+        longest && longest.n > 0 ? sentence('The longest thing you have written is ',
+          el('a', { href: routeOf(longest.rec), class: 'brass' }, titleOf(longest.rec)),
+          ', at ', big(longest.n.toLocaleString()), ' words.') : null,
+        (() => {
+          const favs = recs.filter(r => r.favourite).length;
+          return favs ? sentence('You have marked ', big(favs), ' record', favs === 1 ? '' : 's',
+            ' as worth keeping close — ', big((favs / Math.max(1, recs.length) * 100).toFixed(0) + '%'),
+            ' of the archive.') : null;
+        })(),
+        (() => {
+          const sealed = Store.all('letter').filter(l => l.opensOn && daysUntil(l.opensOn) > 0);
+          if (!sealed.length) return null;
+          const furthest = sealed.sort((a, b) => b.opensOn.localeCompare(a.opensOn))[0];
+          return sentence(big(sealed.length), ' letter', sealed.length === 1 ? ' is' : 's are',
+            ' still sealed. The last one opens in ', big(yearOf(furthest.opensOn)),
+            Life.birth() ? `, when you are ${ageOn(Life.birth(), toDate(furthest.opensOn)).years}.` : '.');
+        })())));
 }
 
 /* ═══ 09 · SHELL, ROUTER, BOOT ═══════════════════════════════════════ */
@@ -3633,6 +3987,7 @@ const MODULES = [
   { key: 'home',        label: 'Home',        route: '#/',             icon: 'home',     group: 'Archive',  render: viewHome,         blurb: 'Where you are, right now' },
   { key: 'timeline',    label: 'Timeline',    route: '#/timeline',     icon: 'timeline', group: 'Archive',  render: viewTimeline,     blurb: 'Everything, in order' },
   { key: 'chapters',    label: 'Chapters',    route: '#/chapters',     icon: 'book',     group: 'Archive',  render: viewChapters,     type: 'chapter', blurb: 'The eras you have named' },
+  { key: 'statistics',  label: 'Statistics',  route: '#/statistics',   icon: 'spark',    group: 'Archive',  render: viewStats,        blurb: 'What the archive knows about itself' },
 
   { key: 'memories',    label: 'Memories',    route: '#/memories',     icon: 'memory',   group: 'The record', render: viewMemories,   type: 'memory' },
   { key: 'odyssey',     label: 'Odyssey',     route: '#/odyssey',      icon: 'compass',  group: 'The record', render: viewOdyssey,    type: 'experience' },
@@ -3651,6 +4006,15 @@ const MODULES = [
   { key: 'settings',    label: 'Settings',    route: '#/settings',     icon: 'settings', group: null, render: viewSettings },
 ];
 const moduleByKey = (k) => MODULES.find(m => m.key === k);
+
+/** Days since the last export, or null if it has never happened. */
+const BACKUP_DAYS = 30;
+function backupAge() {
+  const at = Store.state.prefs.lastExport;
+  if (!at) return null;
+  return Math.max(0, Math.floor((Date.now() - new Date(at).getTime()) / DAY));
+}
+const backupOverdue = () => Store.every().length > 12 && (backupAge() === null || backupAge() > BACKUP_DAYS);
 const go = (hash) => { location.hash = hash || '#/'; };
 
 /* ── theme ──────────────────────────────────────────────────────────── */
@@ -3700,8 +4064,10 @@ function renderSpine() {
   spine.appendChild(scroll);
 
   spine.appendChild(el('div.spine__foot',
-    el('a', { class: 'nav-item', href: '#/settings', 'aria-current': current.module === 'settings' ? 'page' : null },
-      icon('settings', 15, 'nav-item__ico'), el('span.nav-item__txt', 'Settings')),
+    el('a', { class: 'nav-item', href: '#/settings', 'aria-current': current.module === 'settings' ? 'page' : null,
+      title: backupOverdue() ? 'This archive has not been exported lately' : null },
+      icon('settings', 15, 'nav-item__ico'), el('span.nav-item__txt', 'Settings'),
+      backupOverdue() ? el('span.nav-item__flag', { 'aria-label': 'Backup overdue' }) : null),
     el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px', padding: '2px 10px 4px' } },
       el('span.meta', { style: { flex: 1 } }, `${Store.stats().records} records`),
       el('span.kbd', '⌘K'))));
@@ -3741,6 +4107,7 @@ function renderTopbar() {
 /* ── router ─────────────────────────────────────────────────────────── */
 const Router = {
   current: { module: 'home', id: null, params: {} },
+  siblings: null,          // set by the record view, walked with J / K
   parse() {
     const raw = location.hash.replace(/^#\/?/, '');
     const [pathPart, queryPart] = raw.split('?');
@@ -3753,6 +4120,7 @@ const Router = {
   },
   render() {
     this.current = this.parse();
+    this.siblings = null;
     const { module, id, params } = this.current;
     const m = moduleByKey(module);
     const view = $('#view');
@@ -3813,7 +4181,7 @@ document.addEventListener('keydown', (e) => {
     clearTimeout(chordTimer); chord = null;
     const map = { h: '#/', t: '#/timeline', m: '#/memories', o: '#/odyssey', p: '#/people',
       l: '#/lessons', w: '#/letters', a: '#/achievements', s: '#/soundtrack', g: '#/gallery',
-      c: '#/chapters', k: '#/collections', r: '#/places', ',': '#/settings' };
+      c: '#/chapters', k: '#/collections', r: '#/places', i: '#/statistics', ',': '#/settings' };
     if (map[e.key.toLowerCase()]) { e.preventDefault(); go(map[e.key.toLowerCase()]); }
     return;
   }
@@ -3826,6 +4194,19 @@ document.addEventListener('keydown', (e) => {
       openComposer(m?.type || 'memory');
       break;
     }
+    /* step through the module you are inside, without going back to the list */
+    case 'j': case 'J':
+      if (Router.current.id && Router.siblings?.older) { e.preventDefault(); go(routeOf(Router.siblings.older)); }
+      break;
+    case 'k': case 'K':
+      if (Router.current.id && Router.siblings?.newer) { e.preventDefault(); go(routeOf(Router.siblings.newer)); }
+      break;
+    case 'e': case 'E':
+      if (Router.current.id && Store.get(Router.current.id)) {
+        e.preventDefault();
+        openComposer(Store.get(Router.current.id).type, Router.current.id);
+      }
+      break;
     case '?': e.preventDefault(); shortcutsSheet(); break;
     default: break;
   }
@@ -3835,10 +4216,13 @@ function shortcutsSheet() {
   const rows = [
     ['⌘K  /  /', 'Search everything, jump anywhere, file anything'],
     ['N', 'File something new in the current module'],
+    ['J  /  K', 'Older / newer, from inside a record'],
+    ['E', 'Edit the record you are looking at'],
     ['G then H', 'Home'], ['G then T', 'Timeline'], ['G then M', 'Memories'],
     ['G then O', 'Odyssey'], ['G then P', 'People'], ['G then R', 'Places'],
     ['G then L', 'Lessons'], ['G then W', 'Letters'], ['G then A', 'Achievements'],
     ['G then S', 'Soundtrack'], ['G then G', 'Gallery'], ['G then C', 'Chapters'],
+    ['G then I', 'Statistics'],
     ['⌘↵', 'Save, from inside the composer'],
     ['Esc', 'Close whatever is open'],
     ['?', 'This list'],

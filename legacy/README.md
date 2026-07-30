@@ -39,6 +39,10 @@ Read the file top to bottom; each section only knows the ones above it.
 | 08 | `views` | One lens per module |
 | 09 | `boot` | Shell, router, keyboard, first run |
 
+Fifteen modules: Home, Timeline, Chapters, Statistics, Memories, Odyssey,
+People, Places, Lessons, Letters, Achievements, Soundtrack, Gallery,
+Collections, Settings.
+
 ### The schema is the load-bearing idea
 
 `SCHEMA` declares each record type's fields once, and that declaration drives
@@ -59,7 +63,10 @@ code path.
 
 Until you attach a real photograph, every record renders a **plate**: a
 generated field seeded by the record's own id, so it is stable forever and
-identical in every view.
+identical in every view. Attach one — drag it onto the record, or use Attach —
+and it replaces the plate everywhere at once: hero, cards, gallery, home. A
+photograph too small to fill its frame is contained over its plate rather than
+upscaled into a blur.
 
 ## Design
 
@@ -78,7 +85,9 @@ Both are designed at token level — the dark theme is not an inversion.
 |---|---|
 | `⌘K` / `/` | Search everything, jump anywhere, file anything |
 | `N` | File something new in the current module |
-| `G` then `H T M O P R L W A S G C` | Go to module |
+| `J` / `K` | Older / newer, from inside a record |
+| `E` | Edit the record you are looking at |
+| `G` then `H T M O P R L W A S G C I` | Go to module |
 | `⌘↵` | Save, from inside the composer |
 | `Esc` | Close whatever is open |
 | `?` | Shortcuts |
@@ -92,6 +101,11 @@ never displayed as a leaderboard.
 **Sealed letters are a ritual, not encryption.** The words are in your own
 archive and you could always look. The app says so plainly, and records when a
 seal is broken early.
+
+**Statistics is written in sentences.** A life measured should not read as a
+dashboard, so the figures are followed by prose you could say out loud — the
+densest year, the longest silence, the share of your days that are written
+down. Gaps are shown as part of the record, never as a broken streak.
 
 **Places is a navigational chart, not a street map.** Landmass geometry needs an
 offline dataset a single-file build cannot carry, so places are plotted on a
