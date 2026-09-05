@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tulisan 2 — judul belum diisi</title>
+<meta name="description" content="Satu catatan kerja: situasi yang dihadapi, dugaan awal, kenapa dugaan itu gagal, apa yang saya ubah, dan apa yang masih belum terjawab sampai hari ini.">
+<link rel="canonical" href="https://GANTI-DENGAN-DOMAIN-ANDA.tld/tulisan-2.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="id_ID">
+<meta property="og:title" content="Tulisan 2 — judul belum diisi">
+<meta property="og:description" content="Satu catatan kerja: situasi yang dihadapi, dugaan awal, kenapa dugaan itu gagal, apa yang saya ubah, dan apa yang masih belum terjawab sampai hari ini.">
+<meta property="og:url" content="https://GANTI-DENGAN-DOMAIN-ANDA.tld/tulisan-2.html">
+<meta name="twitter:card" content="summary">
+<!-- og:image sengaja tidak ada. Tidak ada gambar yang boleh dikarang, dan
+     PART 4.4 melarang hero image / foto stok. Isi setelah ada gambar milik sendiri. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Source+Serif+4:wght@400;600&display=swap">
+<style>
+    /* ---------- Token. PART 8. Tidak ada nilai di luar daftar ini. ---------- */
+    :root{
+      color-scheme: light dark;
+
+      /* Palet terang. PART 8.3 */
+      --bg:#FBFAF7;
+      --ink:#1A1917;
+      --muted:#6E6A62;
+      --rule:#E3E0D8;
+      --accent:#8A3B12;
+
+      /* Tipografi. PART 8.1 */
+      --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+      --sans:Inter,system-ui,-apple-system,sans-serif;
+
+      /* Skala modular 1.25 relatif terhadap ukuran dasar (18px desktop / 17px mobile) */
+      --f-14:0.778rem;
+      --f-16:0.889rem;
+      --f-18:1rem;
+      --f-22:1.222rem;
+      --f-28:1.556rem;
+      --f-35:1.944rem;
+      --f-44:2.444rem;
+
+      /* Lebar ukuran baris. 36.5rem = 657px pada dasar 18px; dikurangi padding 2x24px
+         menyisakan 609px teks. Rata-rata lebar glif Source Serif 4 pada 18px terukur
+         9.39px (bukan 8.6px seperti perkiraan awal), jadi 609px = ~65 karakter per baris.
+         Angka ini hasil pengukuran di browser, bukan taksiran. */
+      --measure:36.5rem;
+      /* Hanya strip bukti yang boleh melebar. Teks isi tidak pernah melewati --measure. */
+      --measure-strip:52rem;
+    }
+
+    /* Palet gelap. Hanya token warna yang ditimpa. */
+    @media (prefers-color-scheme:dark){
+      :root{
+        --bg:#15140F;
+        --ink:#ECE9E1;
+        --muted:#9A968C;
+        --rule:#2D2B24;
+        --accent:#E08B57;
+      }
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+
+    /* 112.5% dari 16px = 18px, tapi tetap mengikuti preferensi ukuran huruf pengguna. */
+    html{font-size:112.5%;-webkit-text-size-adjust:100%;scroll-padding-top:64px}
+    @media (max-width:639px){html{font-size:106.25%}} /* = 17px */
+
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:var(--serif);
+      font-weight:400;
+      font-size:var(--f-18);
+      line-height:1.65;
+      text-wrap:pretty;
+      animation:tampil 200ms ease-out both; /* satu-satunya animasi di situs. PART 8.4 */
+    }
+    @keyframes tampil{from{opacity:0}to{opacity:1}}
+
+    img{max-width:100%;height:auto;display:block}
+
+    h1,h2,h3{font-weight:600;line-height:1.15;text-wrap:balance;margin:0}
+    h1{font-size:var(--f-44)}
+    h2{font-size:var(--f-28)}
+    h3{font-size:var(--f-22)}
+    @media (max-width:639px){h1{font-size:var(--f-28)}h2{font-size:var(--f-22)}}
+
+    p{margin:0}
+    p + p{margin-top:24px}
+
+    /* Hukum kedekatan. PART 8.2: judul lebih dekat ke isinya sendiri (16px)
+       daripada ke isi sebelumnya (48px). */
+    h2,h3{margin-top:48px;margin-bottom:16px}
+    h2:first-child,h3:first-child{margin-top:0}
+
+    a{
+      color:inherit;
+      text-decoration:underline;
+      text-decoration-thickness:1px;
+      text-underline-offset:3px;
+      transition:color 150ms linear; /* satu-satunya transisi di situs. PART 8.4 */
+    }
+    a:hover,a:focus-visible{color:var(--accent)}          /* aksen 1 dari 3 */
+    :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation:none !important;transition:none !important}
+    }
+
+    /* ---------- Kerangka ---------- */
+    .lewati{position:absolute;left:-9999px;top:0}
+    .lewati:focus{
+      position:static;display:block;
+      padding:12px 24px;
+      font-family:var(--sans);font-weight:500;font-size:var(--f-16);
+      background:var(--bg);
+    }
+
+    nav{position:sticky;top:0;z-index:10;height:56px;background:var(--bg);border-bottom:1px solid var(--rule)}
+    nav .baris{max-width:var(--measure);margin-inline:auto;padding-inline:24px;height:56px;display:flex;align-items:center}
+    nav ul{list-style:none;margin:0;padding:0;display:flex;gap:24px;font-family:var(--sans);font-weight:500;font-size:var(--f-16);line-height:1}
+    nav a{text-decoration:none}
+    nav a:hover,nav a:focus-visible{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+
+    .kolom{max-width:var(--measure);margin-inline:auto;padding-inline:24px}
+    .kolom-strip{max-width:var(--measure-strip);margin-inline:auto;padding-inline:24px}
+
+    section{padding-block:96px}
+    section:first-of-type{padding-top:48px}
+    @media (max-width:639px){section{padding-block:64px}section:first-of-type{padding-top:32px}}
+
+    .label{
+      font-family:var(--sans);font-weight:500;font-size:var(--f-14);
+      letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);
+      margin:0 0 16px;
+    }
+
+    /* ---------- Blok yang belum diisi manusia. PART 4.2 ---------- */
+    .kosong{
+      display:block;
+      background:var(--rule);
+      border-left:2px solid var(--muted);
+      padding:16px;
+      margin-block:16px;
+      font-family:var(--sans);font-weight:500;
+      font-size:var(--f-16);line-height:1.5;
+      color:var(--ink);
+    }
+    .kosong .tanda{display:block;font-size:var(--f-14);letter-spacing:0.08em;margin-bottom:8px}
+    .kosong .target{display:block;margin-top:8px;font-size:var(--f-14);color:var(--ink)}
+
+    /* ---------- Bagian 1. Pernyataan pembuka ---------- */
+    .pembuka .lede{margin-top:16px;color:var(--ink)}
+
+    /* ---------- Bagian 2. Strip bukti ---------- */
+    /* Tepat 4 butir. Aturan ditulis eksplisit per butir di tiap titik henti
+       supaya tidak ada sisa border dari titik henti sebelumnya. */
+    .bukti{
+      list-style:none;margin:24px 0 0;padding:0;
+      border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+      font-family:var(--sans);font-weight:500;font-size:var(--f-16);line-height:1.5;
+    }
+    .bukti > li{padding-block:12px;border-top:1px solid var(--rule)}
+    .bukti > li:nth-child(1){border-top:0}
+    @media (min-width:640px){
+      .bukti{display:grid;grid-template-columns:repeat(2,1fr)}
+      .bukti > li{padding:16px;border-top:0;border-left:1px solid var(--rule)}
+      .bukti > li:nth-child(1),.bukti > li:nth-child(3){border-left:0;padding-left:0}
+      .bukti > li:nth-child(2),.bukti > li:nth-child(4){padding-right:0}
+      .bukti > li:nth-child(3),.bukti > li:nth-child(4){border-top:1px solid var(--rule)}
+    }
+    @media (min-width:1024px){
+      .bukti{grid-template-columns:repeat(4,1fr)}
+      .bukti > li:nth-child(1),.bukti > li:nth-child(2),
+      .bukti > li:nth-child(3),.bukti > li:nth-child(4){
+        border-top:0;border-left:1px solid var(--rule);padding-inline:16px;
+      }
+      .bukti > li:nth-child(1){border-left:0;padding-left:0}
+      .bukti > li:nth-child(4){padding-right:0}
+    }
+
+    /* ---------- Bagian 3. Daftar Catatan Kerja ---------- */
+    .tulisan{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+    .tulisan > li{border-bottom:1px solid var(--rule)}
+    .tulisan > li > a{display:block;padding-block:24px;text-decoration:none}
+    .tulisan .judul{
+      display:block;font-family:var(--serif);font-weight:600;font-size:var(--f-22);line-height:1.15;
+      text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;
+    }
+    .tulisan .kait{display:block;margin-top:8px}
+    .tulisan time{display:block;margin-top:8px;font-family:var(--sans);font-weight:500;font-size:var(--f-14);color:var(--muted)}
+
+    /* ---------- Bagian 4. Kerja ---------- */
+    .pembatasan{
+      border-left:2px solid var(--accent);                 /* aksen 2 dari 3 */
+      padding:24px;
+      margin-block:32px;
+      font-size:var(--f-22);line-height:1.4;
+    }
+    .label-b{margin-top:96px}
+    .proses{border-top:1px solid var(--rule);padding-top:32px;margin-top:48px}
+    .proses:first-of-type{margin-top:32px}
+    .blok{margin-top:24px}
+    .blok:first-of-type{margin-top:16px}
+    .blok > .label{margin-bottom:8px}
+    figure{margin:24px 0 0}
+    figcaption{margin-top:8px;font-family:var(--sans);font-weight:500;font-size:var(--f-14);color:var(--muted)}
+
+    /* ---------- Bagian 5. Jejak ---------- */
+    .jejak{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+    .jejak > li{padding-block:16px;border-bottom:1px solid var(--rule)}
+    @media (min-width:640px){
+      .jejak > li{display:grid;grid-template-columns:8rem 1fr;gap:16px;align-items:baseline}
+    }
+    .jejak time{font-family:var(--sans);font-weight:500;font-size:var(--f-16);color:var(--muted)}
+
+    /* ---------- Bagian 6. Cara saya bekerja ---------- */
+    .prinsip{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+    .prinsip > li{padding-block:16px;border-bottom:1px solid var(--rule)}
+
+    /* ---------- Bagian 7. Satu ajakan ---------- */
+    .ajakan .pemicu{font-size:var(--f-22);line-height:1.4}
+    .ajakan .kanal{margin-top:24px;font-family:var(--sans);font-weight:500;font-size:var(--f-22)}
+    .ajakan .kanal a{color:var(--accent)}                  /* aksen 3 dari 3 */
+    .ajakan .balas{margin-top:16px;font-family:var(--sans);font-weight:500;font-size:var(--f-16);color:var(--muted)}
+
+    /* ---------- Bagian 8. Kolofon ---------- */
+    .kolofon{border-top:1px solid var(--rule);padding-block:32px}
+    .kolofon .isi{font-family:var(--sans);font-weight:500;font-size:var(--f-14);line-height:1.6;color:var(--muted)}
+    .kolofon dl{margin:0}
+    .kolofon dt{margin-top:12px;color:var(--ink)}
+    .kolofon dt:first-child{margin-top:0}
+    .kolofon dd{margin:4px 0 0}
+
+    /* ---------- Halaman tulisan ---------- */
+    /* Halaman tulisan tidak memakai <section>, jadi jarak atas/bawahnya
+       diberikan di sini supaya sama dengan jarak antar bagian di halaman utama. */
+    main > .kolom{padding-block:96px}
+    @media (max-width:639px){main > .kolom{padding-block:64px}}
+    article header{margin-bottom:48px}
+    article header time{display:block;margin-top:16px;font-family:var(--sans);font-weight:500;font-size:var(--f-16);color:var(--muted)}
+    article h2{margin-top:48px;margin-bottom:16px}
+    .kembali{margin-top:96px;font-family:var(--sans);font-weight:500;font-size:var(--f-16)}
+</style>
+</head>
+<body>
+<a class="lewati" href="#utama">Lewati ke isi utama</a>
+<nav aria-label="Navigasi utama">
+  <div class="baris">
+    <ul>
+      <li><a href="index.html">Beranda</a></li>
+      <li><a href="index.html#catatan-kerja">Catatan Kerja</a></li>
+      <li><a href="index.html#kerja">Kerja</a></li>
+      <li><a href="index.html#kontak">Kontak</a></li>
+    </ul>
+  </div>
+</nav>
+<main id="utama">
+  <div class="kolom">
+    <article>
+      <header>
+        <h1>Tulisan 2 &mdash; judul belum diisi</h1>
+        <span class="kosong"><span class="tanda">BELUM DIISI</span><span class="spek">Judul tulisan dan tanggal terbit. Judul juga perlu disalin ke &lt;title&gt;, og:title, dan baris daftar di index.html.</span><span class="target">Judul maksimal 12 kata</span></span>
+        <!-- Setelah diisi:
+             <time datetime="2026-01-31">31 Januari 2026</time>
+             Ganti juga nama berkas ini menjadi slug judulnya, lalu perbarui
+             tautannya di index.html. -->
+      </header>
+
+<!--
+Arah 2. Kenapa saya menolak membiarkan AI mengerjakan revisi saya.
+
+Bahan yang sudah ada dan tinggal ditulis:
+  - pilihan sadar mengerjakan manual padahal jalur otomatis tersedia
+  - tiga alasannya
+  - hasil akhirnya
+
+Ini menjawab langsung ketakutan pembaca nomor 4: karya bagus di situs ini
+mungkin bukan hasil kerja dia sendiri.
+-->
+
+      <h2>Situasi</h2>
+      <span class="kosong"><span class="tanda">BELUM DIISI</span><span class="spek">Apa yang dihadapi, secara konkret. Tanpa pemanasan.</span><span class="target">1 paragraf. Target 80 sampai 120 kata</span></span>
+      <h2>Yang saya kira benar</h2>
+      <span class="kosong"><span class="tanda">BELUM DIISI</span><span class="spek">Dugaan atau pendekatan awal.</span><span class="target">1 sampai 2 paragraf. Target 100 sampai 180 kata</span></span>
+      <h2>Kenapa itu gagal</h2>
+      <span class="kosong"><span class="tanda">BELUM DIISI</span><span class="spek">Bukti spesifik kegagalannya. Angka, detail, hal yang bisa diperiksa. Ini bagian terpanjang.</span><span class="target">Target 220 sampai 420 kata</span></span>
+      <h2>Apa yang saya ubah</h2>
+      <span class="kosong"><span class="tanda">BELUM DIISI</span><span class="spek">Keputusan barunya, dan alasannya.</span><span class="target">2 sampai 3 paragraf. Target 150 sampai 300 kata</span></span>
+      <h2>Apa yang masih belum saya tahu</h2>
+      <span class="kosong"><span class="tanda">BELUM DIISI</span><span class="spek">Wajib ada. Menghapusnya membuat seluruh tulisan terdengar seperti pamer.</span><span class="target">1 paragraf. Target 70 sampai 120 kata</span></span>
+
+      <p class="kembali"><a href="index.html">Kembali ke daftar catatan kerja</a></p>
+    </article>
+  </div>
+</main>
+<footer class="kolofon">
+  <div class="kolom">
+    <div class="isi">
+      <dl>
+        <dt>Dibangun dengan</dt>
+        <dd>HTML dan CSS yang ditulis tangan. Tanpa framework, tanpa build step,
+            tanpa JavaScript, tanpa analitik, tanpa cookie.</dd>
+        <dt>Tipografi</dt>
+        <dd>Source Serif 4 untuk teks isi, Inter untuk label dan navigasi.
+            Dua keluarga huruf, tiga berat, subset latin.</dd>
+        <dt>Yang sengaja tidak ditampilkan</dt>
+        <dd>Tidak ada visual, angka internal, atau kutipan dari pekerjaan klien.
+            Aset itu bukan milik saya, jadi tidak saya tampilkan.
+            Yang bisa saya bagikan hanya proses dan keputusannya.</dd>
+        <dt>Pembaruan terakhir</dt>
+        <dd><time datetime="2026-09-05">5 September 2026</time></dd>
+      </dl>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
