@@ -2,6 +2,8 @@ import type { EpisodeQuery } from '../../shared/api';
 import { PHASES, STAGES, type Phase, type Stage } from '../../shared/domain';
 
 /** Built-in views, addressable by slug in the URL (/episodes?view=ready). Mirrors server SYSTEM_VIEWS. */
+export const isCustomView = (v: string | null | undefined) => !!v && /^v\d+$/.test(v);
+
 export const VIEW_SLUGS: { slug: string; name: string; query: EpisodeQuery }[] = [
   { slug: 'all', name: 'All episodes', query: {} },
   { slug: 'ready', name: 'Ready to post', query: { phases: ['READY'], sort: 'priority' } },
@@ -23,7 +25,7 @@ const strs = (v: string | null) => (v ? v.split(',').filter(Boolean) : undefined
 export function queryFromParams(p: URLSearchParams, customViews: { id: number; query: EpisodeQuery }[] = []): EpisodeQuery {
   const view = p.get('view');
   let base: EpisodeQuery = {};
-  if (view?.startsWith('v')) base = customViews.find((v) => `v${v.id}` === view)?.query ?? {};
+  if (view && /^v\d+$/.test(view)) base = customViews.find((v) => `v${v.id}` === view)?.query ?? {};
   else if (view) base = VIEW_SLUGS.find((v) => v.slug === view)?.query ?? {};
   const q: EpisodeQuery = { ...base };
   const set = <K extends keyof EpisodeQuery>(k: K, v: EpisodeQuery[K] | undefined) => {

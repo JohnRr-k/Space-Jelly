@@ -184,6 +184,7 @@ api.delete('/tags/:id', (c) => {
 
 // ================================================================ dashboard / today / intelligence
 api.get('/dashboard', (c) => ok(c, I.dashboard()));
+api.get('/badges', (c) => ok(c, I.badges()));
 api.get('/today', (c) => ok(c, I.todayView()));
 api.post('/today/queue', async (c) => {
   I.queueAdd((await body(c, z.object({ episodeIds: zIds }))).episodeIds);

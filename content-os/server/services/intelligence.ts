@@ -31,15 +31,19 @@ export function bottleneck(projectId?: number): Bottleneck {
   const pf = projectId ? 'AND e.project_id = ?' : '';
   const pp = projectId ? [projectId] : [];
   const stages = PRE_RELEASE_STAGES;
-  const cols = stages
-    .map((s) => {
-      const gate = PACKAGING.has(s) ? `e.phase = 'QC'` : `e.phase <> 'IDEA'`;
-      return `sum(e.actionable LIKE '%,${s},%' AND ${gate} AND es_${s}.status = 'NOT_STARTED'),
-              sum(e.actionable LIKE '%,${s},%' AND ${gate} AND es_${s}.status = 'IN_PROGRESS')`;
-    })
-    .join(', ');
-  const joins = stages.map((s) => `JOIN episode_stages es_${s} ON es_${s}.episode_id = e.id AND es_${s}.stage = '${s}'`).join(' ');
-  const raw = d.prepare(`SELECT ${cols} FROM episodes e ${joins} WHERE ${ACTIVE} ${pf}`).raw().get(...pp) as (number | null)[];
+  // One pass over (episode × stage): a stage is "at the station" when it is in the episode's
+  // actionable set; packaging stages only once production is finished (phase QC).
+  const queueRows = d
+    .prepare(
+      `SELECT es.stage, sum(es.status = 'NOT_STARTED') AS ns, sum(es.status = 'IN_PROGRESS') AS ip
+       FROM episodes e JOIN episode_stages es ON es.episode_id = e.id
+       WHERE ${ACTIVE} ${pf} AND e.phase <> 'IDEA' AND e.actionable <> ''
+         AND instr(e.actionable, ',' || es.stage || ',') > 0
+         AND (es.stage NOT IN ('CAPTION','COVER') OR e.phase = 'QC')
+       GROUP BY es.stage`,
+    )
+    .all(...pp) as { stage: Stage; ns: number; ip: number }[];
+  const atStation = new Map(queueRows.map((r) => [r.stage, r]));
   const statusRows = d
     .prepare(
       `SELECT es.stage, sum(es.status = 'BLOCKED') AS bl, sum(es.status = 'DONE' AND es.completed_at >= ?) AS done14
@@ -47,9 +51,9 @@ export function bottleneck(projectId?: number): Bottleneck {
     )
     .all(daysAgoIso(14), ...pp) as { stage: Stage; bl: number; done14: number }[];
   const by = new Map(statusRows.map((r) => [r.stage, r]));
-  const flows: StageFlow[] = stages.map((s, i) => {
-    const waiting = raw[i * 2] ?? 0;
-    const inProgress = raw[i * 2 + 1] ?? 0;
+  const flows: StageFlow[] = stages.map((s) => {
+    const waiting = atStation.get(s)?.ns ?? 0;
+    const inProgress = atStation.get(s)?.ip ?? 0;
     const r = by.get(s);
     const done14d = r?.done14 ?? 0;
     const perDay = done14d / 14;
@@ -116,12 +120,11 @@ function todayNumbers() {
 
 // =============================================================== next best action
 
-export function nextActions(): NextAction[] {
+export function nextActions(bn: Bottleneck = bottleneck()): NextAction[] {
   const d = db();
   const today = todayNumbers();
   const counts = phaseCounts();
   const ready = counts.ready ?? 0;
-  const bn = bottleneck();
   const out: NextAction[] = [];
   const day = localDay();
 
@@ -353,6 +356,7 @@ export function dashboard() {
     )
     .get(daysAgoIso(settingNum('dormant_idea_days'))) as { inbox: number | null; dormant: number | null };
 
+  const bn = bottleneck();
   return {
     counts: {
       total: counts.total ?? 0,
@@ -365,8 +369,8 @@ export function dashboard() {
       overdue: overdueCount,
     },
     today,
-    bottleneck: bottleneck(),
-    actions: nextActions(),
+    bottleneck: bn,
+    actions: nextActions(bn),
     projects,
     attention,
     upcoming: upcoming.map((u) => ({ ...u, code: episodeCode(u.code as string, u.number as number) })),
@@ -427,7 +431,7 @@ export function todayView() {
     bottleneck: bn,
     bottleneckEpisodes: episodeItems(bnIds),
     doneToday,
-    actions: nextActions(),
+    actions: nextActions(bn),
   };
 }
 
@@ -764,3 +768,12 @@ export function purge(kind: string, id: number) {
 }
 
 export { SEARCH_KINDS };
+
+/** Lightweight counts for navigation badges (polled often). */
+export function badges() {
+  const d = db();
+  const today = todayNumbers();
+  const c = d.prepare(`SELECT sum(e.blocked) AS blocked, sum(e.phase = 'READY') AS ready FROM episodes e WHERE ${ACTIVE}`).get() as { blocked: number | null; ready: number | null };
+  const inbox = (d.prepare(`SELECT count(*) AS c FROM ideas WHERE deleted_at IS NULL AND archived_at IS NULL AND status = 'INBOX'`).get() as { c: number }).c;
+  return { today: today.remaining, ideas: inbox, blocked: c.blocked ?? 0, ready: c.ready ?? 0 };
+}

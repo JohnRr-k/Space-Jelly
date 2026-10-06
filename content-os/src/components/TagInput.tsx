@@ -5,7 +5,7 @@ import { cx } from './ui';
 
 const norm = (s: string) => s.trim().replace(/^#/, '').replace(/\s+/g, '-').toLowerCase();
 
-export function TagInput({ value, onChange, placeholder = 'Add tags…', className }: { value: string[]; onChange: (tags: string[]) => void; placeholder?: string; className?: string }) {
+export function TagInput({ value, onChange, placeholder = 'Add tags…', className, id }: { value: string[]; onChange: (tags: string[]) => void; placeholder?: string; className?: string; id?: string }) {
   const [text, setText] = useState('');
   const meta = useMeta();
   const listId = useId();
@@ -34,6 +34,7 @@ export function TagInput({ value, onChange, placeholder = 'Add tags…', classNa
         </span>
       ))}
       <input
+        id={id}
         list={listId}
         value={text}
         onChange={(e) => setText(e.target.value)}

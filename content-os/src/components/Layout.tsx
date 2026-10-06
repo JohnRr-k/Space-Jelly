@@ -162,10 +162,9 @@ function Sidebar({ onClose }: { onClose: () => void }) {
   const meta = useMeta();
   const [theme, setTheme] = useLocalState<'light' | 'dark' | 'system'>('theme', 'system');
   const badges = useQuery({
-    queryKey: ['nav-badges'],
-    queryFn: () => api.get<{ today: { remaining: number }; ideas: { inbox: number }; counts: { blocked: number } }>('/dashboard'),
+    queryKey: ['badges'],
+    queryFn: () => api.get<{ today: number; ideas: number; blocked: number }>('/badges'),
     staleTime: 20_000,
-    select: (d) => ({ today: d.today.remaining, ideas: d.ideas.inbox, blocked: d.counts.blocked }),
   });
   useEffect(() => {
     const dark = theme === 'dark' || (theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);

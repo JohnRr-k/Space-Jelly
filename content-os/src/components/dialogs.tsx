@@ -35,11 +35,11 @@ export function ProjectSelect({ value, onChange, allowNone, noneLabel = 'No proj
   );
 }
 
-export function SeriesSelect({ projectId, value, onChange }: { projectId: number | null | undefined; value: number | null | undefined; onChange: (id: number | null) => void }) {
+export function SeriesSelect({ projectId, value, onChange, id }: { projectId: number | null | undefined; value: number | null | undefined; onChange: (id: number | null) => void; id?: string }) {
   const meta = useMeta();
   const options = meta.data?.series.filter((s) => s.projectId === projectId && (!s.archivedAt || s.id === value)) ?? [];
   return (
-    <Select value={value ?? ''} onChange={(e) => onChange(e.target.value ? Number(e.target.value) : null)} disabled={!projectId}>
+    <Select id={id} value={value ?? ''} onChange={(e) => onChange(e.target.value ? Number(e.target.value) : null)} disabled={!projectId}>
       <option value="">No series</option>
       {options.map((s) => (
         <option key={s.id} value={s.id}>
@@ -50,9 +50,9 @@ export function SeriesSelect({ projectId, value, onChange }: { projectId: number
   );
 }
 
-export function PrioritySelect({ value, onChange }: { value: number; onChange: (p: number) => void }) {
+export function PrioritySelect({ value, onChange, id }: { value: number; onChange: (p: number) => void; id?: string }) {
   return (
-    <Select value={value} onChange={(e) => onChange(Number(e.target.value))}>
+    <Select id={id} value={value} onChange={(e) => onChange(Number(e.target.value))}>
       {[0, 1, 2, 3].map((p) => (
         <option key={p} value={p}>
           {PRIORITY_LABEL[p]}

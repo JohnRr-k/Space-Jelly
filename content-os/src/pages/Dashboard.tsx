@@ -103,7 +103,7 @@ function KpiStrip({ d }: { d: DashboardData }) {
           <div className={cx('tabular mt-0.5 text-display font-semibold tracking-tight', it.tone ?? 'text-ink')}>{num(it.value)}</div>
         </Link>
       ))}
-      <div className="hidden bg-surface sm:block lg:hidden" />
+      <div className="bg-surface lg:hidden" aria-hidden />
     </div>
   );
 }

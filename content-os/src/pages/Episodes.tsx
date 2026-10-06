@@ -6,7 +6,7 @@ import { ArrowDownWideNarrow, ArrowUpNarrowWide, Bookmark, Filter, Lightbulb, Li
 import { PHASES, PHASE_META, STAGES, STAGE_META, PRIORITY_LABEL, type Phase, type Stage } from '../../shared/domain';
 import { api } from '../lib/api';
 import { useAction, useDebounced, useMeta } from '../lib/hooks';
-import { FILTER_PARAMS, VIEW_SLUGS, paramsFromQuery, queryFromParams } from '../lib/episodeQuery';
+import { FILTER_PARAMS, VIEW_SLUGS, isCustomView, paramsFromQuery, queryFromParams } from '../lib/episodeQuery';
 import type { EpisodeListItem, EpisodeQuery } from '../lib/types';
 import { num, relative } from '../lib/format';
 import { Button, Empty, ErrorState, Input, Modal, Popover, Select, Spinner, cx, useConfirm } from '../components/ui';
@@ -105,10 +105,11 @@ export default function Episodes() {
 
   const toggle = (id: number, index: number, shift: boolean) => {
     setAllMatching(false);
+    const anchor = lastClicked.current; // read now: the updater below runs later
     setSelected((prev) => {
       const next = new Set(prev);
-      if (shift && lastClicked.current !== null) {
-        const [a, b] = [Math.min(lastClicked.current, index), Math.max(lastClicked.current, index)];
+      if (shift && anchor !== null) {
+        const [a, b] = [Math.min(anchor, index), Math.max(anchor, index)];
         for (let i = a; i <= b; i++) next.add(items[i].id);
       } else if (next.has(id)) next.delete(id);
       else next.add(id);
@@ -131,7 +132,7 @@ export default function Episodes() {
     return () => window.removeEventListener('keydown', onKey);
   }, [selected.size]);
 
-  const viewName = activeView?.startsWith('v') ? customViews.find((v) => `v${v.id}` === activeView)?.name : VIEW_SLUGS.find((v) => v.slug === activeView)?.name;
+  const viewName = isCustomView(activeView) ? customViews.find((v) => `v${v.id}` === activeView)?.name : VIEW_SLUGS.find((v) => v.slug === activeView)?.name;
 
   return (
     <PageShell>
@@ -235,7 +236,7 @@ function EpisodeRow({ ep, selected, onToggle, onOpen, style }: { ep: EpisodeList
           onToggle(e.shiftKey);
         }}
       />
-      <span className="flex w-16 shrink-0 items-center gap-1.5">
+      <span className="hidden w-16 shrink-0 items-center gap-1.5 sm:flex">
         <ProjectDot color={ep.projectColor} />
         <Code>{ep.code}</Code>
       </span>
@@ -274,14 +275,14 @@ function EpisodeRow({ ep, selected, onToggle, onOpen, style }: { ep: EpisodeList
           <NextStage stage={ep.nextStage} actionable={ep.actionable} blocked={ep.blocked} note={ep.blockedNote} />
         )}
       </span>
-      <span className="flex w-20 shrink-0 flex-col">
+      <span className="hidden w-20 shrink-0 flex-col sm:flex">
         <PriorityMark priority={ep.priority} />
         <Due date={ep.phase === 'PUBLISHED' ? null : ep.dueDate} />
       </span>
-      <span className="w-12 shrink-0 text-right">
+      <span className="hidden w-12 shrink-0 text-right sm:block">
         <Readiness value={ep.readiness} compact />
       </span>
-      <span className="w-24 shrink-0">
+      <span className="shrink-0 sm:w-24">
         <PhaseBadge phase={ep.phase} blocked={ep.blocked} />
       </span>
       <span className="hidden w-20 shrink-0 text-right text-caption text-ink-3 2xl:block">{relative(ep.updatedAt)}</span>

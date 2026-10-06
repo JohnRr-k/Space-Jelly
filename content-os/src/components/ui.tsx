@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react';
+import { cloneElement, forwardRef, isValidElement, useEffect, useId, useRef, useState, type ReactElement, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react';
 import { createPortal } from 'react-dom';
 import { Loader2, X } from 'lucide-react';
 
@@ -69,12 +69,32 @@ export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSel
 });
 
 export function Field({ label, hint, error, children, className }: { label: string; hint?: ReactNode; error?: string | null; children: ReactNode; className?: string }) {
+  const auto = useId();
+  const hintId = `${auto}-hint`;
+  // Single form controls get an explicit id so the label is their exact accessible name.
+  const el = isValidElement(children) && typeof children.type !== 'string' || (isValidElement(children) && ['input', 'select', 'textarea'].includes(children.type as string)) ? (children as ReactElement<Record<string, unknown>>) : null;
+  const id = (el?.props.id as string | undefined) ?? auto;
+  const control = el ? cloneElement(el, { id, 'aria-describedby': hint || error ? hintId : undefined, 'aria-invalid': error ? true : el.props['aria-invalid'] }) : children;
   return (
-    <label className={cx('flex flex-col gap-1', className)}>
-      <span className="text-ui-sm font-medium text-ink-2">{label}</span>
-      {children}
-      {error ? <span className="text-caption text-blocked-text">{error}</span> : hint ? <span className="text-caption text-ink-3">{hint}</span> : null}
-    </label>
+    <div className={cx('flex flex-col gap-1', className)}>
+      {el ? (
+        <label htmlFor={id} className="text-ui-sm font-medium text-ink-2">
+          {label}
+        </label>
+      ) : (
+        <span className="text-ui-sm font-medium text-ink-2">{label}</span>
+      )}
+      {control}
+      {error ? (
+        <span id={hintId} className="text-caption text-blocked-text">
+          {error}
+        </span>
+      ) : hint ? (
+        <span id={hintId} className="text-caption text-ink-3">
+          {hint}
+        </span>
+      ) : null}
+    </div>
   );
 }
 
