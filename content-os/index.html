@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23213a33'/%3E%3Cpath d='M9 22V10h4v12zm6 0V14h4v8zm6 0v-5h4v5z' fill='%23e8e4d8'/%3E%3C/svg%3E" />
+    <title>Content OS — Grow Mindset</title>
+    <script>
+      try {
+        var t = localStorage.getItem('cos:theme');
+        t = t ? JSON.parse(t) : 'system';
+        if (t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
