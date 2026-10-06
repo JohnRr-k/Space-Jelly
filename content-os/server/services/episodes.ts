@@ -97,17 +97,17 @@ export function recomputeEpisodes(ids: number[]) {
 
 // =============================================================== list / query
 
-const SORTS: Record<NonNullable<EpisodeQuery['sort']>, string> = {
-  updated: 'e.updated_at',
-  created: 'e.created_at',
-  priority: 'e.priority',
-  readiness: 'e.readiness',
-  due: "coalesce(e.due_date, '9999')",
-  number: 'p.code, e.number',
-  title: 'e.title COLLATE NOCASE',
-  progress: "coalesce(e.progress_at, e.created_at)",
-  published: "coalesce(e.published_at, '')",
-  scheduled: "coalesce(e.scheduled_at, '9999')",
+const SORTS: Record<NonNullable<EpisodeQuery['sort']>, string[]> = {
+  updated: ['e.updated_at'],
+  created: ['e.created_at'],
+  priority: ['e.priority'],
+  readiness: ['e.readiness'],
+  due: ["coalesce(e.due_date, '9999')"],
+  number: ['p.code', 'e.number'],
+  title: ['e.title COLLATE NOCASE'],
+  progress: ['coalesce(e.progress_at, e.created_at)'],
+  published: ["coalesce(e.published_at, '')"],
+  scheduled: ["coalesce(e.scheduled_at, '9999')"],
 };
 const DEFAULT_DIR: Record<string, 'asc' | 'desc'> = {
   updated: 'desc',
@@ -122,15 +122,16 @@ const DEFAULT_DIR: Record<string, 'asc' | 'desc'> = {
   scheduled: 'asc',
 };
 const GROUPS: Record<string, { expr: string; label: string; order: string }> = {
-  project: { expr: 'p.id', label: 'p.name', order: 'p.sort_order, p.name' },
-  series: { expr: "coalesce(s.id, 0)", label: "coalesce(p.code || ' · ' || s.title, 'No series')", order: "s.id IS NULL, p.sort_order, s.sort_order, s.title" },
+  // `order` must be a single expression: it ranks both the rows and the group headers.
+  project: { expr: 'p.id', label: 'p.name', order: '(p.sort_order * 100000 + p.id)' },
+  series: { expr: 'coalesce(s.id, 0)', label: "coalesce(p.name || ' — ' || s.title, 'No series')", order: '(CASE WHEN s.id IS NULL THEN 1e12 ELSE p.sort_order * 1e6 + s.sort_order * 1000 + s.id END)' },
   phase: {
     expr: 'e.phase',
     label: 'e.phase',
     order: `CASE e.phase ${PHASES.map((p, i) => `WHEN '${p}' THEN ${i}`).join(' ')} END`,
   },
   priority: { expr: 'e.priority', label: 'e.priority', order: 'e.priority' },
-  type: { expr: 'e.content_type_id', label: 'ct.name', order: 'ct.sort_order, ct.name' },
+  type: { expr: 'e.content_type_id', label: 'ct.name', order: '(ct.sort_order * 1000 + ct.id)' },
 };
 
 /** Turns a free-text query into a safe FTS5 prefix query. */
@@ -326,7 +327,7 @@ export function listEpisodes(q: EpisodeQuery): EpisodeListResult {
   const sortKey = q.sort ?? 'updated';
   const dir = (q.dir ?? DEFAULT_DIR[sortKey]) === 'asc' ? 'ASC' : 'DESC';
   const group = q.group && q.group !== 'none' ? GROUPS[q.group] : null;
-  const order = `${group ? `${group.order}, ` : ''}${SORTS[sortKey].split(',').map((c) => `${c} ${dir}`).join(', ')}, e.id DESC`;
+  const order = `${group ? `${group.order}, ` : ''}${SORTS[sortKey].map((c) => `${c} ${dir}`).join(', ')}, e.id DESC`;
 
   const total = (d.prepare(`SELECT count(*) AS c ${LIST_FROM} WHERE ${where}`).get(...params) as { c: number }).c;
   const rows = d
@@ -338,7 +339,7 @@ export function listEpisodes(q: EpisodeQuery): EpisodeListResult {
   let groups: EpisodeListResult['groups'];
   if (group) {
     const g = d
-      .prepare(`SELECT ${group.expr} AS key, ${group.label} AS label, count(*) AS count ${LIST_FROM} WHERE ${where} GROUP BY ${group.expr} ORDER BY min(${group.order.split(',')[0]})`)
+      .prepare(`SELECT ${group.expr} AS key, ${group.label} AS label, count(*) AS count ${LIST_FROM} WHERE ${where} GROUP BY ${group.expr} ORDER BY min(${group.order})`)
       .all(...params) as { key: string | number; label: string | number; count: number }[];
     groups = g.map((x) => ({
       key: String(x.key),

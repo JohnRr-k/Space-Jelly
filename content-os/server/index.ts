@@ -11,6 +11,7 @@ import api from './api';
 const PORT = Number(process.env.PORT ?? process.env.API_PORT ?? 4317);
 const PROD = process.env.NODE_ENV === 'production';
 
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 const db = openDb();
 setDb(db);
 const fresh = bootstrap();

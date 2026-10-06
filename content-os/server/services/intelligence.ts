@@ -539,7 +539,7 @@ export function resurface() {
        WHERE sr.deleted_at IS NULL AND sr.archived_at IS NULL AND i.deleted_at IS NULL AND i.archived_at IS NULL
          AND i.status IN ('INBOX','PARKED','DEVELOPING') AND i.touched_at < ?
          AND EXISTS (SELECT 1 FROM episodes e JOIN activity a ON a.episode_id = e.id WHERE e.series_id = sr.id AND a.at >= ?)
-       GROUP BY sr.id ORDER BY ideas DESC LIMIT 8`,
+       GROUP BY sr.id HAVING count(DISTINCT i.id) >= 2 ORDER BY ideas DESC LIMIT 6`,
     )
     .all(daysAgoIso(dormantDays), daysAgoIso(14)) as Record<string, unknown>[];
 

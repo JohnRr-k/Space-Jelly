@@ -1,0 +1,258 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------ tokens
+   Primitives are oklch ramps; components only use the semantic layer below. */
+:root {
+  --n-0: oklch(1 0 0);
+  --n-25: oklch(0.987 0.002 250);
+  --n-50: oklch(0.973 0.003 250);
+  --n-100: oklch(0.947 0.004 250);
+  --n-150: oklch(0.92 0.005 250);
+  --n-200: oklch(0.886 0.006 250);
+  --n-300: oklch(0.81 0.008 250);
+  --n-400: oklch(0.68 0.01 250);
+  --n-500: oklch(0.56 0.012 250);
+  --n-600: oklch(0.46 0.012 250);
+  --n-700: oklch(0.37 0.012 250);
+  --n-800: oklch(0.28 0.01 250);
+  --n-850: oklch(0.235 0.009 250);
+  --n-900: oklch(0.2 0.008 250);
+  --n-950: oklch(0.165 0.007 250);
+
+  --g-50: oklch(0.97 0.02 165);
+  --g-100: oklch(0.93 0.04 165);
+  --g-500: oklch(0.56 0.1 165);
+  --g-600: oklch(0.48 0.09 165);
+  --g-700: oklch(0.41 0.075 165);
+
+  /* semantic */
+  --bg: var(--n-50);
+  --bg-sunken: var(--n-100);
+  --surface: var(--n-0);
+  --surface-2: var(--n-25);
+  --hover: oklch(0.5 0.01 250 / 0.07);
+  --active: oklch(0.5 0.01 250 / 0.12);
+  --border: var(--n-150);
+  --border-strong: var(--n-200);
+  --text: var(--n-950);
+  --text-2: var(--n-600);
+  --text-3: var(--n-500);
+  --accent: var(--g-600);
+  --accent-hover: var(--g-700);
+  --accent-fg: oklch(0.99 0.01 165);
+  --accent-subtle: var(--g-50);
+  --accent-text: var(--g-700);
+  --focus: oklch(0.6 0.12 165);
+
+  /* production status — one meaning per hue */
+  --st-done: oklch(0.6 0.12 155);
+  --st-done-bg: oklch(0.95 0.04 155);
+  --st-done-text: oklch(0.42 0.09 155);
+  --st-progress: oklch(0.76 0.14 75);
+  --st-progress-bg: oklch(0.96 0.05 85);
+  --st-progress-text: oklch(0.48 0.1 65);
+  --st-blocked: oklch(0.6 0.19 25);
+  --st-blocked-bg: oklch(0.95 0.035 25);
+  --st-blocked-text: oklch(0.5 0.17 25);
+  --st-none: var(--n-200);
+  --st-skip-text: var(--n-400);
+  --st-sched: oklch(0.6 0.12 250);
+  --st-sched-bg: oklch(0.95 0.03 250);
+  --st-sched-text: oklch(0.45 0.12 255);
+
+  /* sequential progress ramp (idea → published), one hue */
+  --seq-1: oklch(0.9 0.035 165);
+  --seq-2: oklch(0.79 0.07 165);
+  --seq-3: oklch(0.66 0.1 165);
+  --seq-4: oklch(0.53 0.095 165);
+  --seq-5: oklch(0.4 0.075 165);
+  --track: var(--n-100);
+
+  --shadow-pop: 0 1px 2px oklch(0 0 0 / 0.06), 0 8px 24px oklch(0 0 0 / 0.1);
+  --shadow-card: 0 1px 2px oklch(0 0 0 / 0.04);
+  color-scheme: light;
+}
+
+.dark {
+  --bg: var(--n-950);
+  --bg-sunken: oklch(0.14 0.006 250);
+  --surface: var(--n-900);
+  --surface-2: var(--n-850);
+  --hover: oklch(0.9 0.01 250 / 0.06);
+  --active: oklch(0.9 0.01 250 / 0.1);
+  --border: oklch(0.27 0.009 250);
+  --border-strong: oklch(0.33 0.01 250);
+  --text: oklch(0.95 0.004 250);
+  --text-2: oklch(0.74 0.008 250);
+  --text-3: oklch(0.6 0.01 250);
+  --accent: oklch(0.62 0.1 165);
+  --accent-hover: oklch(0.68 0.1 165);
+  --accent-fg: oklch(0.16 0.02 165);
+  --accent-subtle: oklch(0.27 0.04 165);
+  --accent-text: oklch(0.78 0.09 165);
+  --focus: oklch(0.7 0.11 165);
+
+  --st-done: oklch(0.66 0.11 155);
+  --st-done-bg: oklch(0.29 0.05 155);
+  --st-done-text: oklch(0.82 0.1 155);
+  --st-progress: oklch(0.78 0.13 75);
+  --st-progress-bg: oklch(0.31 0.05 75);
+  --st-progress-text: oklch(0.86 0.11 80);
+  --st-blocked: oklch(0.66 0.17 25);
+  --st-blocked-bg: oklch(0.3 0.06 25);
+  --st-blocked-text: oklch(0.82 0.1 25);
+  --st-none: oklch(0.34 0.01 250);
+  --st-skip-text: oklch(0.5 0.01 250);
+  --st-sched: oklch(0.68 0.11 250);
+  --st-sched-bg: oklch(0.3 0.05 250);
+  --st-sched-text: oklch(0.84 0.08 250);
+
+  --seq-1: oklch(0.34 0.03 165);
+  --seq-2: oklch(0.45 0.06 165);
+  --seq-3: oklch(0.56 0.085 165);
+  --seq-4: oklch(0.68 0.095 165);
+  --seq-5: oklch(0.82 0.08 165);
+  --track: oklch(0.25 0.008 250);
+
+  --shadow-pop: 0 1px 2px oklch(0 0 0 / 0.4), 0 12px 32px oklch(0 0 0 / 0.5);
+  --shadow-card: none;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --color-bg: var(--bg);
+  --color-sunken: var(--bg-sunken);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-hover: var(--hover);
+  --color-active: var(--active);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text);
+  --color-ink-2: var(--text-2);
+  --color-ink-3: var(--text-3);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-subtle: var(--accent-subtle);
+  --color-accent-text: var(--accent-text);
+  --color-done: var(--st-done);
+  --color-done-bg: var(--st-done-bg);
+  --color-done-text: var(--st-done-text);
+  --color-progress: var(--st-progress);
+  --color-progress-bg: var(--st-progress-bg);
+  --color-progress-text: var(--st-progress-text);
+  --color-blocked: var(--st-blocked);
+  --color-blocked-bg: var(--st-blocked-bg);
+  --color-blocked-text: var(--st-blocked-text);
+  --color-none: var(--st-none);
+  --color-skip-text: var(--st-skip-text);
+  --color-sched: var(--st-sched);
+  --color-sched-bg: var(--st-sched-bg);
+  --color-sched-text: var(--st-sched-text);
+
+  /* type scale named by role */
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-ui-sm: 0.8125rem;
+  --text-ui-sm--line-height: 1.25rem;
+  --text-ui: 0.875rem;
+  --text-ui--line-height: 1.375rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.55;
+  --text-title: 1.0625rem;
+  --text-title--line-height: 1.4;
+  --text-heading: 1.375rem;
+  --text-heading--line-height: 1.2;
+  --text-display: 1.875rem;
+  --text-display--line-height: 1.1;
+
+  --color-seq-1: var(--seq-1);
+  --color-seq-2: var(--seq-2);
+  --color-seq-3: var(--seq-3);
+  --color-seq-4: var(--seq-4);
+  --color-seq-5: var(--seq-5);
+  --color-track: var(--track);
+
+  --shadow-pop: var(--shadow-pop);
+  --shadow-card: var(--shadow-card);
+}
+
+/* ------------------------------------------------------------------ base
+   Inside @layer base so Tailwind utilities always win. */
+@layer base {
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  touch-action: manipulation;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  font-feature-settings: 'cv11', 'ss01';
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+  letter-spacing: -0.012em;
+}
+::selection {
+  background: oklch(0.8 0.08 165 / 0.45);
+}
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+input,
+select,
+textarea,
+button {
+  font: inherit;
+  color: inherit;
+}
+select {
+  background-color: var(--surface);
+  color: var(--text);
+}
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-pop {
+  animation: pop-in 140ms ease-out;
+}
