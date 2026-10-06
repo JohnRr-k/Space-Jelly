@@ -21,6 +21,12 @@ if (fresh && !process.env.CONTENT_OS_NO_DEMO) {
 }
 
 const app = new Hono();
+// Full database backup (a standard SQLite file — also importable into the single-file app).
+app.get('/api/export', () => {
+  const bytes = db.serialize();
+  const name = `content-os-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}.sqlite`;
+  return new Response(new Uint8Array(bytes), { headers: { 'Content-Type': 'application/vnd.sqlite3', 'Content-Disposition': `attachment; filename="${name}"` } });
+});
 app.route('/api', api);
 
 // Uploaded asset files

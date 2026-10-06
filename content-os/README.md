@@ -17,10 +17,20 @@ On first start an empty database is created in `data/content-os.db` and filled w
 | `npm run seed` | Reset to the demo universe (previous DB is moved to `data/backups/`, never deleted) |
 | `npm run seed -- --scale 5000` | Demo + 5,000 synthetic episodes for performance testing |
 | `npm run seed:empty` | Reset to a clean database with only base configuration |
-| `npm test` | Readiness-engine unit tests + API integration tests (real SQLite) |
+| `npm run build:html` | Build the single-file app → `content-os.html` |
+| `npm test` | Readiness-engine unit tests + the API suite against both Node SQLite and SQLite-WASM |
 | `npm run typecheck` | TypeScript across server, shared and client |
 
 Requires Node 20+. No external services, accounts or API keys.
+
+### Single-file version (no install)
+
+`content-os.html` is the whole app in one file. Double-click it — it opens in your browser with the demo universe and works offline. Build it yourself with `npm run build:html`.
+
+- It runs the **same** API, services, schema and search as the server version, on SQLite compiled to WebAssembly (official `@sqlite.org/sqlite-wasm`, which includes FTS5) — the API test suite runs against both backends.
+- Data is saved in that browser (IndexedDB) after every change. **Settings → Data & backup** downloads a backup, restores one, or resets to demo/empty (a safety copy downloads first).
+- Backups are ordinary SQLite files and move freely between versions: copy one to `data/content-os.db` to continue on the server version; the server version’s **Download backup** (`/api/export`) can be restored into the HTML file.
+- Differences: file *upload* is disabled (reference assets by path or link instead), and data is per-browser — another browser or computer starts fresh until you restore a backup.
 
 ---
 

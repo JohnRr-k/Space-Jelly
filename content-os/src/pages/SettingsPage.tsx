@@ -6,6 +6,11 @@ import { useAction, useMeta } from '../lib/hooks';
 import type { ContentTypeDTO } from '../lib/types';
 import { Button, Field, Input, Kbd, Modal, PageHeader, Panel, Skeleton, Textarea, cx, useConfirm } from '../components/ui';
 import { PageShell } from '../components/Layout';
+import { useRef } from 'react';
+import { Download, Upload, RotateCcw } from 'lucide-react';
+import { dataControls } from '../lib/dataControls';
+import { relative } from '../lib/format';
+import { useToast } from '../components/toast';
 
 const MODE_CYCLE: StageMode[] = ['REQUIRED', 'OPTIONAL', 'NONE'];
 const MODE_STYLE: Record<StageMode, string> = { REQUIRED: 'bg-accent text-accent-fg', OPTIONAL: 'bg-transparent text-ink-2 ring-1 ring-inset ring-line-strong', NONE: 'bg-transparent text-ink-3/50' };
@@ -22,6 +27,7 @@ export default function SettingsPage() {
         <div className="grid gap-5">
           <GeneralSettings settings={meta.data.settings} />
           <ContentTypes types={meta.data.contentTypes} />
+          <DataPanel />
           <div className="grid gap-5 lg:grid-cols-2">
             <TagsPanel tags={meta.data.tags} />
             <Shortcuts />
@@ -249,6 +255,85 @@ function Shortcuts() {
           </li>
         ))}
       </ul>
+    </Panel>
+  );
+}
+
+function DataPanel() {
+  const c = dataControls();
+  const toast = useToast();
+  const confirm = useConfirm();
+  const file = useRef<HTMLInputElement>(null);
+  const st = c.status?.();
+  const run = async (fn: () => Promise<void>) => {
+    try {
+      await fn();
+    } catch (e) {
+      toast.error(e);
+    }
+  };
+  return (
+    <Panel title="Data & backup">
+      {c.mode === 'standalone' ? (
+        <div className="grid gap-1 text-ui-sm text-ink-2">
+          <p>
+            This single-file version keeps your whole database inside this browser (IndexedDB) and saves after every change
+            {st?.lastSavedAt ? ` — last saved ${relative(st.lastSavedAt)}` : ''}. Clearing browser data or using another browser starts fresh, so export a backup regularly.
+          </p>
+          {st && !st.storageOk && <p className="text-blocked-text">This browser is blocking storage — changes are NOT being saved. Export your data before closing the page.</p>}
+          {st?.persistent === false && <p className="text-ink-3">The browser may evict this data under storage pressure; exporting is your safety net.</p>}
+          <p className="text-ink-3">Backups are standard SQLite files. They also work with the full server version: copy one to <code className="font-mono">content-os/data/content-os.db</code>.</p>
+        </div>
+      ) : (
+        <p className="text-ui-sm text-ink-2">
+          Your database is <code className="font-mono">content-os/data/content-os.db</code>. Download a copy any time; it can also be opened in the single-file version.
+        </p>
+      )}
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Button icon={<Download className="size-3.5" />} onClick={() => run(c.exportDb)}>
+          Download backup
+        </Button>
+        {c.importDb && (
+          <>
+            <input
+              ref={file}
+              type="file"
+              accept=".sqlite,.db,.sqlite3,application/octet-stream"
+              hidden
+              onChange={async (e) => {
+                const f = e.target.files?.[0];
+                e.target.value = '';
+                if (f && (await confirm.ask('Replace all data with this backup?', 'A copy of your current data downloads first, so nothing is lost.', 'Import backup'))) run(() => c.importDb!(f));
+              }}
+            />
+            <Button icon={<Upload className="size-3.5" />} onClick={() => file.current?.click()}>
+              Restore from backup…
+            </Button>
+          </>
+        )}
+        {c.reset && (
+          <>
+            <Button
+              variant="ghost"
+              icon={<RotateCcw className="size-3.5" />}
+              onClick={async () => {
+                if (await confirm.ask('Start with an empty workspace?', 'Removes the demo content and everything you added. A backup of the current data downloads first.', 'Start empty')) run(() => c.reset!('empty'));
+              }}
+            >
+              Start empty
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={async () => {
+                if (await confirm.ask('Reload the demo universe?', 'Replaces all current data with the demo projects. A backup of the current data downloads first.', 'Reload demo')) run(() => c.reset!('demo'));
+              }}
+            >
+              Reload demo data
+            </Button>
+          </>
+        )}
+      </div>
+      {confirm.node}
     </Panel>
   );
 }

@@ -13,6 +13,7 @@ import * as P from './services/projects';
 import * as L from './services/library';
 import * as Pub from './services/publishing';
 import * as I from './services/intelligence';
+import { saveUpload } from './uploads';
 
 const api = new Hono();
 
@@ -412,7 +413,7 @@ api.post('/episodes/:id/assets', async (c) => {
     if (file instanceof File) {
       if (file.size > MAX_UPLOAD) throw new HttpError(413, 'File is larger than 500 MB. Store it elsewhere and paste its path or URL instead.');
       E.episodeRow(epId);
-      const saved = Pub.saveUpload(epId, file.name, Buffer.from(await file.arrayBuffer()));
+      const saved = saveUpload(epId, file.name, Buffer.from(await file.arrayBuffer()));
       return ok(c, { id: Pub.createAsset(epId, { ...meta, fileRef: saved.fileRef }, { size: saved.size, mime: file.type || null }) });
     }
     return ok(c, { id: Pub.createAsset(epId, meta) });

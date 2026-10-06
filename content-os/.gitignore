@@ -5,3 +5,4 @@ data/*.db-*
 data/uploads/
 *.local
 data/backups/
+dist-standalone/

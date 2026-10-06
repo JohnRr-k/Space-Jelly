@@ -1,5 +1,5 @@
 /** Ideas, sources, insights and people — the "content brain" side of the system. */
-import { nowIso, daysAgoIso } from '../db';
+import { nowIso, daysAgoIso } from '../time';
 import { db, tx, notFound, invalid, logActivity, setTags, tagsFor, buildUpdate, settingNum } from './core';
 import { createEpisode, episodeItems, ftsQuery } from './episodes';
 import { createSeries } from './projects';

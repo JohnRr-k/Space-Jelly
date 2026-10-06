@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle } from 'lucide-react';
 import { PRIORITY_LABEL } from '../../shared/domain';
@@ -82,9 +82,9 @@ export function SimilarHint({ text, excludeId }: { text: string; excludeId?: num
         {items.map((e) => (
           <li key={e.id} className="flex items-center gap-2 text-ui-sm">
             <Code>{e.code}</Code>
-            <a href={`/episodes/${e.id}`} target="_blank" rel="noreferrer" className="min-w-0 truncate text-ink hover:underline">
+            <Link to={`/episodes/${e.id}`} className="min-w-0 truncate text-ink hover:underline">
               {e.title}
-            </a>
+            </Link>
             <PhaseBadge phase={e.phase} />
           </li>
         ))}

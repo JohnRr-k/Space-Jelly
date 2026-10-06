@@ -113,9 +113,13 @@ export function Layout() {
 
   return (
     <GlobalCtx.Provider value={ui}>
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-surface focus:px-3 focus:py-2">
+      <button
+        type="button"
+        onClick={() => document.getElementById('main')?.focus()}
+        className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-surface focus:px-3 focus:py-2"
+      >
         Skip to content
-      </a>
+      </button>
       <div className="flex min-h-dvh">
         <aside className={cx('fixed inset-y-0 left-0 z-40 w-60 shrink-0 border-r border-line bg-sunken transition-transform lg:sticky lg:top-0 lg:h-dvh lg:translate-x-0', mobileNav ? 'translate-x-0' : '-translate-x-full')}>
           <Sidebar onClose={() => setMobileNav(false)} />
@@ -146,7 +150,7 @@ export function Layout() {
               </button>
             </div>
           </header>
-          <main id="main" className="min-w-0 flex-1 px-3 py-5 sm:px-6 lg:px-8">
+          <main id="main" tabIndex={-1} className="min-w-0 flex-1 px-3 py-5 sm:px-6 lg:px-8">
             <Outlet />
           </main>
         </div>

@@ -1,11 +1,26 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import type { DB } from '../db';
-import { nowIso } from '../db';
+import { nowIso } from '../time';
 
 // ---------------------------------------------------------------- database handle
+/**
+ * The subset of the better-sqlite3 API the services use. The server passes a real better-sqlite3
+ * connection; the single-file browser build passes a SQLite-WASM adapter with the same shape.
+ */
+export interface Statement {
+  get(...params: unknown[]): unknown;
+  all(...params: unknown[]): unknown[];
+  run(...params: unknown[]): { changes: number; lastInsertRowid: number | bigint };
+  raw(): { get(...params: unknown[]): unknown };
+}
+export interface DB {
+  prepare(sql: string): Statement;
+  exec(sql: string): unknown;
+  transaction<T>(fn: () => T): () => T;
+}
+
 let _db: DB | null = null;
-export function setDb(db: DB) {
-  _db = db;
+export function setDb(db: unknown) {
+  _db = db as DB;
 }
 export function db(): DB {
   if (!_db) throw new Error('Database not initialised');

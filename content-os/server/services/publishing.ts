@@ -1,8 +1,6 @@
 /** Publications (one episode → many platforms), analytics snapshots and assets (versioned files). */
-import fs from 'node:fs';
-import path from 'node:path';
 import { STAGE_META, PLATFORM_LABEL, type Platform, type Stage } from '../../shared/domain';
-import { nowIso, UPLOAD_DIR } from '../db';
+import { nowIso } from '../time';
 import { db, tx, notFound, invalid, logActivity, buildUpdate } from './core';
 import { episodeRow, recomputeEpisodes, setStages } from './episodes';
 
@@ -163,15 +161,6 @@ interface AssetRow {
   stage: Stage | null;
   file_ref: string;
   deleted_at: string | null;
-}
-
-export function saveUpload(episodeId: number, fileName: string, data: Buffer) {
-  const safe = fileName.replace(/[^\w.\-]+/g, '_').slice(-120) || 'file';
-  const dir = path.join(UPLOAD_DIR, String(episodeId));
-  fs.mkdirSync(dir, { recursive: true });
-  const stored = `${Date.now()}-${safe}`;
-  fs.writeFileSync(path.join(dir, stored), data);
-  return { fileRef: `/files/${episodeId}/${stored}`, size: data.length };
 }
 
 export function createAsset(episodeId: number, input: AssetInput, file?: { size: number; mime: string | null }) {
