@@ -1,4 +1,5 @@
 import About from '@/components/About';
+import AssetBand from '@/components/AssetBand';
 import Contact from '@/components/Contact';
 import Credentials from '@/components/Credentials';
 import Engagements from '@/components/Engagements';
@@ -39,6 +40,7 @@ export default function Page() {
         <Hero />
         <Ticker />
         <About />
+        <AssetBand />
         <Expertise />
         <Engagements />
         <Leadership />

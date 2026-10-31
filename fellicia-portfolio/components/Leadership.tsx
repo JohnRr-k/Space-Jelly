@@ -1,5 +1,7 @@
 import { certs, featuredRoles } from '@/content/site';
 import CertLink from './CertLink';
+import Ambient from './Ambient';
+import HScroll from './HScroll';
 import { Rules, SectionHead } from './ui';
 
 export default function Leadership() {
@@ -7,35 +9,39 @@ export default function Leadership() {
   return (
     <section id="leadership" className="sec dark lead" data-section="experience" data-label="Experience">
       <Rules />
+      <Ambient kind="orbs" />
+      <p className="drift-word" aria-hidden="true">
+        <span data-drift="0.28">Leadership &amp; Organizational Experience</span>
+      </p>
       <div className="wrap">
         <SectionHead n="04" label="Leadership" title={['Leadership & Organizational', 'Experience']} />
 
-        <ol className="timeline">
+        <ol className="roles">
           {featuredRoles.map((r, i) => (
-            <li key={r.period} className="tl-item" data-reveal style={{ '--i': i } as React.CSSProperties}>
-              <span className="tl-line" aria-hidden="true" data-reveal="vline" />
-              <span className="tl-dot" aria-hidden="true" />
-              <p className="tl-period">{r.period}</p>
-              <div className="tl-body">
-                <h3>{r.title}</h3>
-                <p>{r.org}</p>
-              </div>
+            <li key={r.period} className="role" data-reveal style={{ '--i': i } as React.CSSProperties}>
+              <span className="role-dot" aria-hidden="true" />
+              <p className="role-period">{r.period}</p>
+              <h3>{r.title}</h3>
+              <p className="role-org">{r.org}</p>
             </li>
           ))}
         </ol>
 
         <div className="further" data-reveal>
           <p className="eyebrow">Further organizational experience</p>
-          <ul>
-            {further.map((c) => (
-              <li key={c.id}>
-                <span className="f-period">{c.period}</span>
-                <span className="f-role">{c.role}</span>
-                <span className="f-org">{c.issuer}</span>
+          <HScroll label="Further organizational experience">
+            {further.map((c, i) => (
+              <article key={c.id} className="f-card">
+                <span className="f-i" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <p className="f-period">{c.period}</p>
+                <h3 className="f-role">{c.role}</h3>
+                <p className="f-org">{c.issuer}</p>
                 <CertLink id={c.id} label={c.title} />
-              </li>
+              </article>
             ))}
-          </ul>
+          </HScroll>
         </div>
       </div>
     </section>

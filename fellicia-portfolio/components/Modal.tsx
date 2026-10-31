@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 
 /**
  * Accessible modal on the native <dialog> element: focus trap, Esc to close,
@@ -11,12 +11,14 @@ export default function Modal({
   onClose,
   labelledBy,
   className = '',
+  style,
   children,
 }: {
   open: boolean;
   onClose: () => void;
   labelledBy: string;
   className?: string;
+  style?: CSSProperties;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -32,6 +34,7 @@ export default function Modal({
     <dialog
       ref={ref}
       className={`modal ${className}`}
+      style={style}
       aria-labelledby={labelledBy}
       onClose={onClose}
       onClick={(e) => {

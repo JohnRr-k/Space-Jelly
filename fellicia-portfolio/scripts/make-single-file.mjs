@@ -58,7 +58,7 @@ html = html.replace(/<script src="([^"]+)"([^>]*)><\/script>/g, (tag, src, rest)
 if (!chunks.some((c) => c.includes('pathname:"/_next/"'))) throw new Error('asset-prefix patch did not apply: Next.js internals changed');
 // React re-injects resource-hint <link>s (stylesheet, preloads, icon) that point at files which do not
 // exist beside a single HTML file. Everything is already embedded, so drop them before they hit the network.
-const guard = `<script>(function(){function skip(n){if(!n||n.tagName!=='LINK')return false;var h=n.getAttribute('href')||'';return h.indexOf('/_next/')===0||h.indexOf('/icon.svg')===0||!!n.getAttribute('imagesrcset')}['appendChild','insertBefore'].forEach(function(m){var o=Node.prototype[m];Node.prototype[m]=function(n){if(skip(n)){setTimeout(function(){n.dispatchEvent(new Event('load'))},0);return n}return o.apply(this,arguments)}})})();</script>`;
+const guard = `<script>(function(){function skip(n){if(!n||n.tagName!=='LINK')return false;var h=n.getAttribute('href')||'';return h.indexOf('/_next/')===0||h.indexOf('/media/')===0||h.indexOf('/icon.svg')===0||!!n.getAttribute('imagesrcset')}['appendChild','insertBefore'].forEach(function(m){var o=Node.prototype[m];Node.prototype[m]=function(n){if(skip(n)){setTimeout(function(){n.dispatchEvent(new Event('load'))},0);return n}return o.apply(this,arguments)}})})();</script>`;
 html = html.replace('</body>', `${guard}${mapScript}${chunks.join('')}</body>`);
 
 mkdirSync(dirname(target), { recursive: true });

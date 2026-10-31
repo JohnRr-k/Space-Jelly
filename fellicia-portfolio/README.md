@@ -48,9 +48,12 @@ SITE_URL=https://your-domain.example npm run build:public
 
 - **Colour:** Obsidian `#141416`, Warm Ivory `#F4F1EC`, Deep Burgundy `#791F31` (with a lighter tint `#D4768A` for text on dark surfaces so contrast stays AA), Slate for secondary text.
 - **Type:** Cormorant Garamond (display) + Manrope (interface and body), self-hosted via Fontsource. No external font requests.
-- **Motion:** opening sequence (~2.5 s, skippable, once per session), masked line reveals, image masks, drawing rules,
-  a slow ticker, restrained parallax, scroll progress and a section index. All of it is disabled under `prefers-reduced-motion`
-  and the page is fully readable without JavaScript.
+- **Motion:** a cinematic opening (~5.5 s: counter 000→100, drawing arch and monogram, name reveal, four values, curtain opening; skippable, once per session);
+  inertial smooth scrolling (mouse/trackpad only); sections that slide in as rounded cards; a pinned horizontal gallery for the nine engagements;
+  words that light up as the profile scrolls into view; counters; running certificate rows and drifting outlined type; ambient moving background layers
+  (orbs, arcs, sweeping lines, floating diamonds); magnetic buttons, tilt, a cursor ring and soft spotlight (mouse only); an engagement popup that opens as an iris
+  from the clicked card with its own colour world and a motif built only from phrases in that engagement's description.
+  All of it is disabled under `prefers-reduced-motion`, touch devices get a calm vertical layout, and the page is fully readable without JavaScript.
 - **Accessibility:** semantic landmarks and heading order, skip link, visible focus, native `<dialog>` modals (focus trap, Esc, focus return),
   ARIA tabs with roving tabindex, descriptive alt text, AA contrast. axe-core reports no violations on the page or either dialog type.
 

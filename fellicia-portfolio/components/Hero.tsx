@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { person } from '@/content/site';
 import { media } from '@/lib/media';
+import Ambient from './Ambient';
 import { Arrow, Ln, Rules, stagger } from './ui';
 
 export default function Hero() {
@@ -10,6 +11,7 @@ export default function Hero() {
         <i className="glow g1" />
         <i className="glow g2" />
       </div>
+      <Ambient kind="lines" />
       <Rules />
       <div className="wrap hero-grid">
         <div className="hero-copy">
@@ -34,16 +36,16 @@ export default function Hero() {
             Junior Associate at FRP Law Firm, with professional experience in corporate law, regulatory compliance, legal advisory, and dispute resolution.
           </p>
           <div className="hero-cta" data-reveal style={stagger(5)}>
-            <a className="btn btn-solid" href="#experience">
+            <a className="btn btn-solid" href="#experience" data-magnetic>
               Explore Selected Work <Arrow />
             </a>
-            <a className="btn btn-ghost" href="#contact">
+            <a className="btn btn-ghost" href="#contact" data-magnetic>
               Get in Touch
             </a>
           </div>
         </div>
 
-        <figure className="hero-portrait" data-reveal="arch" style={{ '--i': 1 } as CSSProperties}>
+        <figure className="hero-portrait" data-reveal="arch" data-tilt style={{ '--i': 1 } as CSSProperties}>
           <div className="arch-frame" data-parallax="0.05" aria-hidden="true" />
           <div className="arch">
             <img

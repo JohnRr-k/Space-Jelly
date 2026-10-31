@@ -71,6 +71,12 @@ export type Figure = {
   restricted?: boolean;
 };
 
+/** Special popup element per engagement. Items are phrases taken from the engagement's own description. */
+export type Scope =
+  | { kind: 'count'; from: number; to: number; label: string; title: string; items: string[] }
+  | { kind: 'flow' | 'stack' | 'orbit'; title: string; items: string[]; center?: string }
+  | { kind: 'pair'; title: string; items: [string, string]; back: string[] };
+
 export type Project = {
   id: string;
   n: string;
@@ -82,6 +88,9 @@ export type Project = {
   tags: string[];
   description: string;
   visual: 'duo' | 'wide' | 'arch' | 'doc';
+  /** Colour world of the popup. */
+  tone: 'dark' | 'ivory' | 'burg';
+  scope: Scope;
   figures: Figure[];
 };
 
@@ -99,6 +108,8 @@ const projectData: Project[] = [
     description:
       'Provided legal support in reviewing employee-related financial obligations, including the restructuring of liability components from seven to three. The assessment focused on regulatory compliance, alignment with applicable audit standards, and identification of potential legal risks arising from the restructuring process.',
     visual: 'duo',
+    tone: 'dark',
+    scope: { kind: 'count', from: 7, to: 3, label: 'Liability components', title: 'Restructuring of liability components', items: ['Regulatory compliance', 'Alignment with applicable audit standards', 'Potential legal risks'] },
     figures: PUBLIC_MODE
       ? []
       : [
@@ -131,6 +142,8 @@ const projectData: Project[] = [
     description:
       'Conducted a Legal Due Diligence (LDD) on internal policies and the Board of Directors’ decision-making structure, including the drafting and review of Board of Directors’ Resolutions concerning Personal Data Protection. The scope of work included assessing the compliance of internal policies with the Personal Data Protection Law, SOE regulations, and strengthening data protection governance within the company’s organizational structure.',
     visual: 'wide',
+    tone: 'ivory',
+    scope: { kind: 'stack', title: 'Scope of the review', items: ['Internal policies', 'Board of Directors’ decision-making structure', 'Board of Directors’ Resolutions on Personal Data Protection', 'Compliance with the Personal Data Protection Law and SOE regulations'] },
     figures: PUBLIC_MODE
       ? []
       : [
@@ -155,6 +168,8 @@ const projectData: Project[] = [
     description:
       'Provided legal support in an employment dispute involving a PT Pos Indonesia (Persero) employee who challenged disciplinary sanctions imposed following allegations of fraudulent conduct. The legal assessment focused on reviewing the grounds for disciplinary action, evaluating supporting evidence and internal investigation findings, and assessing compliance with applicable labor regulations and company policies. The engagement aimed to identify potential legal risks and formulate appropriate recommendations for dispute resolution while considering employee rights and corporate interests.',
     visual: 'wide',
+    tone: 'burg',
+    scope: { kind: 'flow', title: 'Legal assessment', items: ['Grounds for disciplinary action', 'Supporting evidence and internal investigation findings', 'Compliance with labor regulations and company policies', 'Recommendations for dispute resolution'] },
     figures: PUBLIC_MODE
       ? []
       : [
@@ -179,6 +194,8 @@ const projectData: Project[] = [
     description:
       'Conducted a review and harmonization of Good Corporate Governance (GCG) assessment parameters and internal evaluation working papers to ensure alignment with applicable State-Owned Enterprise (SOE) regulations and good corporate governance principles. The scope of work included reviewing GCG assessment parameters, evaluating the Board Policy Manual (BPM) and Corporate Policy Manual (CPM), developing recommendations for policy improvements, and aligning corporate documents with GCG principles.',
     visual: 'wide',
+    tone: 'ivory',
+    scope: { kind: 'stack', title: 'Scope of work', items: ['GCG assessment parameters', 'Board Policy Manual (BPM)', 'Corporate Policy Manual (CPM)', 'Recommendations for policy improvements', 'Alignment with GCG principles'] },
     figures: PUBLIC_MODE
       ? []
       : [
@@ -204,6 +221,8 @@ const projectData: Project[] = [
     description:
       'Developed the Board Policy Manual (BPM) and Corporate Policy Manual (CPM) for PT Solusi Energy Nusantara through comprehensive legal and regulatory analysis, formulation of internal corporate policies, and mapping of the authorities and responsibilities of corporate governing bodies. The manuals were developed using a compliance-based and risk management approach to strengthen oversight mechanisms, clarify decision-making processes, and enhance accountability, transparency, and the effective implementation of Good Corporate Governance (GCG) principles.',
     visual: 'duo',
+    tone: 'dark',
+    scope: { kind: 'pair', title: 'Two manuals', items: ['Board Policy Manual', 'Corporate Policy Manual'], back: ['Mapping of governing bodies’ authorities and responsibilities', 'Stronger oversight mechanisms', 'Clearer decision-making processes', 'Accountability and transparency'] },
     figures: PUBLIC_MODE
       ? []
       : [
@@ -236,6 +255,8 @@ const projectData: Project[] = [
     description:
       'Prepared a comprehensive evaluation framework for PT Petrokimia Gresik’s Personal Data Protection (PDP) Guidelines to assess regulatory compliance with the Personal Data Protection Law. The assessment involved a legal gap analysis of existing internal policies and the formulation of strategic recommendations to enhance regulatory compliance, mitigate legal risks, and strengthen the company’s data governance framework.',
     visual: 'duo',
+    tone: 'ivory',
+    scope: { kind: 'flow', title: 'Assessment', items: ['Evaluation framework for the PDP Guidelines', 'Legal gap analysis of existing internal policies', 'Strategic recommendations'] },
     figures: PUBLIC_MODE
       ? []
       : [
@@ -268,6 +289,8 @@ const projectData: Project[] = [
     description:
       'Provided comprehensive ISO 37301-based compliance analysis to ensure the alignment of internal policies and procedures with international standards and applicable legal requirements. Through a gap analysis and risk-based compliance approach, the engagement not only identified potential compliance gaps but also delivered actionable strategic recommendations to strengthen internal control systems, mitigate legal risks, and enhance corporate credibility and stakeholder confidence.',
     visual: 'duo',
+    tone: 'burg',
+    scope: { kind: 'orbit', title: 'Approach and outcomes', center: 'ISO 37301', items: ['Gap analysis', 'Risk-based compliance', 'Internal control systems', 'Legal risk mitigation', 'Stakeholder confidence'] },
     figures: PUBLIC_MODE
       ? []
       : [
@@ -300,6 +323,8 @@ const projectData: Project[] = [
     description:
       'Provides legal assistance in consumer protection matters arising from digital platform-based services. The engagement includes assessing business compliance with service obligations, consumers’ rights to accurate and transparent information, and legal responsibilities arising from service deficiencies or disputes. FRP Law Firm conducts legal analysis, evaluates digital service compliance aspects, and develops strategic approaches for dispute resolution through consumer protection mechanisms, including assistance before the Consumer Dispute Resolution Body (BPSK), to safeguard the legal interests of the parties involved.',
     visual: 'arch',
+    tone: 'ivory',
+    scope: { kind: 'flow', title: 'Engagement', items: ['Compliance with service obligations', 'Consumers’ right to accurate and transparent information', 'Responsibility for service deficiencies or disputes', 'Dispute resolution, including before the BPSK'] },
     figures: [
       {
         src: 'projects/p08-consumer-protection-act.webp',
@@ -321,6 +346,8 @@ const projectData: Project[] = [
     description:
       'Provides legal advisory services in the review and analysis of technology-based commercial agreements, including Information Technology (ICT) Infrastructure Agreements, Letters of Acceptance (LoA), and related contractual documents. The scope of work includes reviewing contractual structures, parties’ rights and obligations, payment provisions, contractual liabilities, and potential legal risks arising from technology project implementation. FRP Law Firm delivers legal analysis and strategic recommendations to ensure legal certainty, strengthen the client’s contractual position, and support the effective execution of technology-based business arrangements.',
     visual: 'doc',
+    tone: 'dark',
+    scope: { kind: 'orbit', title: 'Scope of review', center: 'ICT contracts', items: ['Contractual structures', 'Rights and obligations', 'Payment provisions', 'Contractual liabilities', 'Legal risks'] },
     figures: PUBLIC_MODE
       ? []
       : [

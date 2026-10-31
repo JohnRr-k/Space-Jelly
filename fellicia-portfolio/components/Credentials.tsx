@@ -12,6 +12,7 @@ import {
   type CertCategory,
 } from '@/content/site';
 import { media } from '@/lib/media';
+import Ambient from './Ambient';
 import Modal from './Modal';
 import { Arrow, Rules, SectionHead } from './ui';
 
@@ -93,6 +94,7 @@ export default function Credentials() {
       {/* ---------------------------------------------------------- Education */}
       <section id="credentials" className="sec dark2 cred" data-section="credentials" data-label="Credentials">
         <Rules />
+        <Ambient kind="lines" />
         <div className="wrap">
           <SectionHead n="05" label="Credentials" title={['Academic Background', '& Credentials']} />
 
@@ -100,7 +102,7 @@ export default function Credentials() {
             <div className="gpa" data-reveal>
               <p className="eyebrow">Cumulative GPA</p>
               <p className="gpa-num" aria-label={`${education.gpa} out of ${education.gpaScale}`}>
-                <span>{education.gpa}</span>
+                <span data-count={education.gpa} data-decimals="2">{education.gpa}</span>
                 <small>/{education.gpaScale}</small>
               </p>
               <p className="gpa-sub">
@@ -157,7 +159,7 @@ export default function Credentials() {
 
           <div className="podium">
             {achievements.map((a, i) => (
-              <article key={a.id} className="podium-card" data-reveal style={{ '--i': i } as React.CSSProperties}>
+              <article key={a.id} className={`podium-card ${i === 1 ? "is-down" : ""}`} data-reveal style={{ '--i': i } as React.CSSProperties}>
                 <p className="eyebrow">{a.period}</p>
                 <p className="podium-rank" aria-hidden="true">
                   III

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { about, person } from '@/content/site';
+import Ambient from './Ambient';
 import { Arrow, Ln, Rules } from './ui';
 
 export default function Contact() {
@@ -20,6 +21,10 @@ export default function Contact() {
   return (
     <section id="contact" className="sec dark contact" data-section="contact" data-label="Contact">
       <Rules />
+      <Ambient kind="orbs" />
+      <p className="drift-word is-big" aria-hidden="true">
+        <span data-drift="-0.3">Professional Conversation — Professional Conversation —</span>
+      </p>
       <div className="wrap">
         <p className="eyebrow" data-reveal>
           <span className="eyebrow-n">06</span>
@@ -40,10 +45,10 @@ export default function Contact() {
           </blockquote>
 
           <div className="contact-actions" data-reveal style={{ '--i': 3 } as React.CSSProperties}>
-            <a className="btn btn-solid btn-lg" href={`mailto:${person.email}?subject=${subject}`}>
+            <a className="btn btn-solid btn-lg" data-magnetic href={`mailto:${person.email}?subject=${subject}`}>
               Contact via Email <Arrow />
             </a>
-            <a className="btn btn-ghost btn-lg" href={person.linkedin} target="_blank" rel="noopener noreferrer">
+            <a className="btn btn-ghost btn-lg" data-magnetic href={person.linkedin} target="_blank" rel="noopener noreferrer">
               Connect on LinkedIn <Arrow />
               <span className="sr-only"> (opens in a new tab)</span>
             </a>
