@@ -64,3 +64,10 @@ Automated checks run against the production build with Playwright (Chromium) and
   certificate viewer (from the archive, the credentials cards and the leadership list), `mailto:` and LinkedIn links, all in-page anchors.
 - Reduced motion: no intro, nothing hidden, ticker static. No-JS: content visible, no intro overlay.
 - Public edition: restricted visuals, their file names and descriptions are absent from the output bundle.
+
+## Single-file edition
+
+`npm run build:single` produces `dist/fellicia-portfolio.html`, one self-contained file (CSS, JS, Latin fonts and every image
+embedded, no network access needed) that opens by double-clicking it. It is a **private review copy**: it contains the
+client-related visuals, so do not publish or forward it. It is built with webpack (`next build --webpack`) because
+Next.js' Turbopack runtime locates chunks through script URLs, which inlined scripts do not have.
