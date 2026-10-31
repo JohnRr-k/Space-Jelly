@@ -15,6 +15,8 @@ export default function Intro() {
   const [phase, setPhase] = useState<'idle' | 'play' | 'exit' | 'gone'>('idle');
   const count = useRef<HTMLSpanElement>(null);
   const line = useRef<HTMLDivElement>(null);
+  const bg = useRef<HTMLElement>(null);
+  const arch = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -41,18 +43,47 @@ export default function Intro() {
     };
     raf = requestAnimationFrame(frame);
 
+    /* The arch becomes a window: the ink layer gets an arch-shaped hole that swells until it swallows the screen. */
+    const portal = () => {
+      const el = bg.current;
+      const svg = arch.current;
+      if (!el || !svg) return;
+      const r = svg.getBoundingClientRect();
+      const W = window.innerWidth,
+        H = window.innerHeight;
+      const cx = r.left + r.width / 2;
+      const hw0 = (r.width * 156) / 360;
+      const cy = r.top + (r.height * (20 + 388 / 2)) / 420;
+      const hh0 = (r.height * 194) / 420;
+      const hwEnd = Math.max(W, H) * 1.5;
+      const t1 = performance.now();
+      const dur = 1900;
+      const out = (p: number) => 1 - Math.pow(1 - p, 3);
+      const step = (t: number) => {
+        const p = Math.min(1, (t - t1 - 250) / dur);
+        const e = p <= 0 ? 0 : out(p);
+        const k = hw0 + (hwEnd - hw0) * e * e;
+        const hh = hh0 * (k / hw0);
+        const top = cy - hh,
+          bottom = cy + hh;
+        el.style.clipPath = `path(evenodd, "M0 0H${W}V${H}H0Z M${cx - k} ${bottom}V${top + k}A${k} ${k} 0 0 1 ${cx + k} ${top + k}V${bottom}Z")`;
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
     const finish = () => {
       if (done) return;
       done = true;
       cancelAnimationFrame(raf);
       if (count.current) count.current.textContent = '100';
       setPhase('exit');
+      portal();
       timers.push(
         window.setTimeout(() => {
           root.dataset.intro = 'seen';
           window.dispatchEvent(new Event('intro:done'));
-        }, 500),
-        window.setTimeout(() => setPhase('gone'), 1900),
+        }, 800),
+        window.setTimeout(() => setPhase('gone'), 2500),
       );
     };
     timers.push(window.setTimeout(finish, DURATION + 450));
@@ -73,14 +104,13 @@ export default function Intro() {
 
   return (
     <div className="intro" data-phase={phase} onClick={skip}>
-      <i className="intro-half top" />
-      <i className="intro-half bottom" />
+      <i className="intro-bg" ref={bg} />
       <div className="intro-content">
         <div className="intro-stage" aria-hidden="true">
           <span className="intro-orbit o1" />
           <span className="intro-orbit o2" />
           <div className="intro-art">
-            <svg viewBox="0 0 360 420" className="intro-arch" fill="none">
+            <svg viewBox="0 0 360 420" className="intro-arch" fill="none" ref={arch}>
               <path d="M24 408V176a156 156 0 0 1 312 0v232" pathLength="1" />
               <path d="M44 408V178a136 136 0 0 1 272 0v230" pathLength="1" className="inner" />
               <path d="M64 408V180a116 116 0 0 1 232 0v228" pathLength="1" className="inner2" />

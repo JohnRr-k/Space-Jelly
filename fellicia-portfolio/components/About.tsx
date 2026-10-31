@@ -5,13 +5,17 @@ import { Rules, SectionHead } from './ui';
 
 const emphasis = ['Bachelor of Laws', '3.91/4.00', 'Certified Legal Auditor (CLA)', 'Junior Associate at FRP Law Firm'];
 
-/** Splits the profile into words, keeping the highlighted phrases, so each word can light up as you scroll. */
+/** Splits the profile into words, keeping the highlighted phrases and the original spacing, so each word can light up as you scroll. */
 function tokens(text: string) {
   const re = new RegExp(`(${emphasis.map((e) => e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g');
-  const out: { w: string; em: boolean }[] = [];
+  const out: { w: string; em: boolean; space: boolean }[] = [];
   for (const part of text.split(re)) {
     const em = emphasis.includes(part);
-    for (const w of part.split(/\s+/).filter(Boolean)) out.push({ w, em });
+    for (const piece of part.match(/\S+|\s+/g) ?? []) {
+      if (/^\s+$/.test(piece)) {
+        if (out.length) out[out.length - 1].space = true;
+      } else out.push({ w: piece, em, space: false });
+    }
   }
   return out;
 }
@@ -58,7 +62,7 @@ export default function About() {
             {words.map((t, i) => (
               <span key={i} className="w" style={{ '--i': i } as CSSProperties}>
                 {t.em ? <em>{t.w}</em> : t.w}
-                {' '}
+                {t.space && ' '}
               </span>
             ))}
           </p>

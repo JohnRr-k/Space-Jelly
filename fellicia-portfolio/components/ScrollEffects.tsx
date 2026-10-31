@@ -91,7 +91,8 @@ export default function ScrollEffects() {
         labels[id] = s.dataset.label ?? id;
       }
     });
-    const secs = Array.from(document.querySelectorAll<HTMLElement>('.sec'));
+    const secs = Array.from(document.querySelectorAll<HTMLElement>('.sec, .stmt'));
+    const stmts = Array.from(document.querySelectorAll<HTMLElement>('[data-stmt]'));
     const par = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'));
     const drift = Array.from(document.querySelectorAll<HTMLElement>('[data-drift]'));
     const scrub = Array.from(document.querySelectorAll<HTMLElement>('[data-scrub]'));
@@ -103,6 +104,10 @@ export default function ScrollEffects() {
     const layoutPins = () => {
       const on = wide() && !reduce;
       root.classList.toggle('hpin-on', on);
+      stmts.forEach((s) => {
+        const n = s.querySelectorAll('.stmt-words li').length;
+        s.style.height = on ? `calc(100vh + ${n * 85}vh)` : '';
+      });
       pins.forEach((pin) => {
         const track = pin.querySelector<HTMLElement>('.track');
         if (!track) return;
@@ -117,9 +122,13 @@ export default function ScrollEffects() {
       });
     };
 
+    let lastY = window.scrollY;
+    let vel = 0;
     const update = () => {
       ticking = false;
       const y = window.scrollY;
+      vel = vel * 0.8 + (y - lastY) * 0.2;
+      lastY = y;
       const vh = window.innerHeight;
       const max = Math.max(1, document.documentElement.scrollHeight - vh);
       if (bar.current) bar.current.style.transform = `scaleX(${Math.min(1, y / max)})`;
@@ -173,6 +182,24 @@ export default function ScrollEffects() {
         const r = el.getBoundingClientRect();
         const p = clamp((vh * 0.88 - r.top) / (vh * 0.4 + r.height));
         el.style.setProperty('--p', p.toFixed(3));
+      }
+      for (const s of stmts) {
+        if (!root.classList.contains('hpin-on')) {
+          s.querySelectorAll<HTMLElement>('.stmt-words li').forEach((li) => li.removeAttribute('style'));
+          continue;
+        }
+        const r = s.getBoundingClientRect();
+        const p = clamp(-r.top / Math.max(1, s.offsetHeight - vh));
+        const lis = Array.from(s.querySelectorAll<HTMLElement>('.stmt-words li'));
+        const n = lis.length;
+        lis.forEach((li, i) => {
+          const local = p * n - i; // 0..1 while this word is on stage
+          const o = clamp(1.7 - Math.abs(local - 0.5) * 3.4);
+          li.style.opacity = o.toFixed(3);
+          li.style.transform = `translate3d(0,${((0.5 - local) * 90).toFixed(1)}px,0) scale(${(0.72 + clamp(local, -0.2, 1.2) * 0.42).toFixed(3)})`;
+          li.style.filter = o < 0.98 ? `blur(${((1 - o) * 14).toFixed(1)}px)` : 'none';
+        });
+        s.style.setProperty('--sp', p.toFixed(4));
       }
       for (const pin of pins) {
         if (!root.classList.contains('hpin-on')) continue;
@@ -263,6 +290,8 @@ export default function ScrollEffects() {
         py = e.clientY;
         root.style.setProperty('--sx', `${px}px`);
         root.style.setProperty('--sy', `${py}px`);
+        root.style.setProperty('--mx', ((px / window.innerWidth - 0.5) * 2).toFixed(3));
+        root.style.setProperty('--my', ((py / window.innerHeight - 0.5) * 2).toFixed(3));
         root.classList.add('has-pointer');
         if (!raf) raf = requestAnimationFrame(loop);
       };
@@ -309,6 +338,47 @@ export default function ScrollEffects() {
           el.style.setProperty('--rx', '0deg');
         });
       });
+    }
+
+    /* ------------------------------------------------ marquees that feel the scroll: faster and skewed with velocity */
+    if (!reduce) {
+      const tracks = Array.from(document.querySelectorAll<HTMLElement>('[data-marquee]')).map((el) => ({
+        el,
+        o: 0,
+        speed: parseFloat(el.dataset.speed ?? '50'),
+        dir: parseFloat(el.dataset.dir ?? '1'),
+        vis: true,
+      }));
+      if (tracks.length) {
+        root.classList.add('js-marquee');
+        const mio = new IntersectionObserver((es) => es.forEach((e) => {
+          const t = tracks.find((x) => x.el.parentElement === e.target);
+          if (t) t.vis = e.isIntersecting;
+        }));
+        tracks.forEach((t) => t.el.parentElement && mio.observe(t.el.parentElement));
+        let last = performance.now();
+        let mraf = 0;
+        const mloop = (now: number) => {
+          const dt = Math.min(64, now - last);
+          last = now;
+          vel *= 0.94;
+          const boost = Math.min(900, Math.abs(vel) * 38);
+          for (const t of tracks) {
+            if (!t.vis) continue;
+            const w = t.el.scrollWidth / 3;
+            t.o = (t.o + ((t.speed + boost) * dt) / 1000) % w;
+            const x = t.dir > 0 ? -t.o : t.o - w;
+            t.el.style.transform = `translate3d(${x.toFixed(1)}px,0,0) skewX(${clamp(-vel * 0.5, -12, 12).toFixed(2)}deg)`;
+          }
+          mraf = requestAnimationFrame(mloop);
+        };
+        mraf = requestAnimationFrame(mloop);
+        cleanups.push(() => {
+          cancelAnimationFrame(mraf);
+          mio.disconnect();
+          root.classList.remove('js-marquee');
+        });
+      }
     }
 
     return () => {

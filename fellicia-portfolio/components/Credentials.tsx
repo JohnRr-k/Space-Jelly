@@ -100,6 +100,10 @@ export default function Credentials() {
 
           <div className="edu">
             <div className="gpa" data-reveal>
+              <svg className="gpa-ring" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                <circle className="bg" cx="60" cy="60" r="54" />
+                <circle className="v" cx="60" cy="60" r="54" pathLength="100" transform="rotate(-90 60 60)" />
+              </svg>
               <p className="eyebrow">Cumulative GPA</p>
               <p className="gpa-num" aria-label={`${education.gpa} out of ${education.gpaScale}`}>
                 <span data-count={education.gpa} data-decimals="2">{education.gpa}</span>

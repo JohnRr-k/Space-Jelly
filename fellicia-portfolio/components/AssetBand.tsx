@@ -20,14 +20,14 @@ export default function AssetBand() {
         <span data-drift="-0.35">Corporate Law — Regulatory Compliance — Legal Advisory — Dispute Resolution — Corporate Governance —</span>
       </p>
       <div className="band-row">
-        <div className="band-track slow">
+        <div className="band-track slow" data-marquee data-speed="64" data-dir="1">
           {run(rowA, false)}
           {run(rowA, true)}
           {run(rowA, true)}
         </div>
       </div>
       <div className="band-row">
-        <div className="band-track fast reverse">
+        <div className="band-track fast reverse" data-marquee data-speed="92" data-dir="-1">
           {run(rowB, true)}
           {run(rowB, true)}
           {run(rowB, true)}

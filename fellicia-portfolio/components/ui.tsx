@@ -6,7 +6,28 @@ export const Arrow = ({ className = '' }: { className?: string }) => (
   </svg>
 );
 
-/** One masked line of a headline; the parent needs data-reveal="lines". */
+/** Splits text into words of letters so each letter can rise on its own while wrapping stays natural. */
+export function Chars({ text, base = 0 }: { text: string; base?: number }) {
+  let c = base;
+  return (
+    <>
+      {text.split(' ').map((word, wi, arr) => (
+        <Fragment key={wi}>
+          <span className="wd">
+            {Array.from(word).map((ch, i) => (
+              <span key={i} className="ch" style={{ '--c': c++ } as CSSProperties}>
+                {ch}
+              </span>
+            ))}
+          </span>
+          {wi < arr.length - 1 && ' '}
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
+/** One masked line of a headline; the parent needs data-reveal="lines" or "chars". */
 export function Ln({ children, i = 0 }: { children: ReactNode; i?: number }) {
   return (
     <span className="ln" style={{ '--i': i } as CSSProperties}>
@@ -17,17 +38,19 @@ export function Ln({ children, i = 0 }: { children: ReactNode; i?: number }) {
 
 export function SectionHead({ n, label, title, id }: { n: string; label: string; title: string[]; id?: string }) {
   return (
-    <div className="sec-head" data-reveal="lines">
+    <div className="sec-head" data-reveal="chars">
       <p className="eyebrow">
         <span className="eyebrow-n">{n}</span>
         <i aria-hidden="true" />
         {label}
       </p>
-      <h2 className="title" id={id}>
+      <h2 className="title" id={id} aria-label={title.join(' ')}>
         {title.map((t, i) => (
           <Fragment key={t}>
             {i > 0 && ' '}
-            <Ln i={i}>{t}</Ln>
+            <Ln i={i}>
+              <Chars text={t} base={i * 9} />
+            </Ln>
           </Fragment>
         ))}
       </h2>

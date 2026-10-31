@@ -48,7 +48,7 @@ SITE_URL=https://your-domain.example npm run build:public
 
 - **Colour:** Obsidian `#141416`, Warm Ivory `#F4F1EC`, Deep Burgundy `#791F31` (with a lighter tint `#D4768A` for text on dark surfaces so contrast stays AA), Slate for secondary text.
 - **Type:** Cormorant Garamond (display) + Manrope (interface and body), self-hosted via Fontsource. No external font requests.
-- **Motion:** a cinematic opening (~5.5 s: counter 000→100, drawing arch and monogram, name reveal, four values, curtain opening; skippable, once per session);
+- **Motion:** a cinematic opening (~5.5 s: counter 000→100, drawing arch and monogram, name reveal, four values, then the arch swells into a window onto the hero; skippable, once per session); a hero with an interactive constellation, letter-by-letter name and mouse parallax; a pinned kinetic-type statement (Precision. Credibility. Intellectual depth. Professional authority.); marquees that speed up and skew with scroll velocity; a GPA ring that draws itself;
   inertial smooth scrolling (mouse/trackpad only); sections that slide in as rounded cards; a pinned horizontal gallery for the nine engagements;
   words that light up as the profile scrolls into view; counters; running certificate rows and drifting outlined type; ambient moving background layers
   (orbs, arcs, sweeping lines, floating diamonds); magnetic buttons, tilt, a cursor ring and soft spotlight (mouse only); an engagement popup that opens as an iris

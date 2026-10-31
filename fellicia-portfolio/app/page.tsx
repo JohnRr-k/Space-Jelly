@@ -9,6 +9,7 @@ import Hero from '@/components/Hero';
 import Intro from '@/components/Intro';
 import Leadership from '@/components/Leadership';
 import Nav from '@/components/Nav';
+import Statement from '@/components/Statement';
 import ScrollEffects from '@/components/ScrollEffects';
 import Ticker from '@/components/Ticker';
 import { person } from '@/content/site';
@@ -40,6 +41,7 @@ export default function Page() {
         <Hero />
         <Ticker />
         <About />
+        <Statement />
         <AssetBand />
         <Expertise />
         <Engagements />

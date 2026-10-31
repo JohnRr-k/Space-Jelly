@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { about, person } from '@/content/site';
 import Ambient from './Ambient';
+import Constellation from './Constellation';
 import { Arrow, Ln, Rules } from './ui';
 
 export default function Contact() {
@@ -22,6 +23,7 @@ export default function Contact() {
     <section id="contact" className="sec dark contact" data-section="contact" data-label="Contact">
       <Rules />
       <Ambient kind="orbs" />
+      <Constellation density={0.8} />
       <p className="drift-word is-big" aria-hidden="true">
         <span data-drift="-0.3">Professional Conversation — Professional Conversation —</span>
       </p>

@@ -2,7 +2,8 @@ import type { CSSProperties } from 'react';
 import { person } from '@/content/site';
 import { media } from '@/lib/media';
 import Ambient from './Ambient';
-import { Arrow, Ln, Rules, stagger } from './ui';
+import Constellation from './Constellation';
+import { Arrow, Chars, Ln, Rules, stagger } from './ui';
 
 export default function Hero() {
   return (
@@ -12,18 +13,25 @@ export default function Hero() {
         <i className="glow g2" />
       </div>
       <Ambient kind="lines" />
+      <Constellation />
       <Rules />
       <div className="wrap hero-grid">
         <div className="hero-copy">
           <p className="eyebrow hero-eyebrow" data-reveal style={stagger(0)}>
             {person.position} · {person.firm}
           </p>
-          <h1 className="display hero-name" data-reveal="lines">
-            <Ln i={0}>Fellicia</Ln>{' '}
-            <Ln i={1}>
-              <em>Angelica</em>
+          <h1 className="display hero-name" data-reveal="chars" aria-label="Fellicia Angelica Kholim">
+            <Ln i={0}>
+              <Chars text="Fellicia" base={0} />
             </Ln>{' '}
-            <Ln i={2}>Kholim</Ln>
+            <Ln i={1}>
+              <em>
+                <Chars text="Angelica" base={8} />
+              </em>
+            </Ln>{' '}
+            <Ln i={2}>
+              <Chars text="Kholim" base={16} />
+            </Ln>
           </h1>
           <p className="hero-desig" data-reveal style={stagger(3)}>
             <span>

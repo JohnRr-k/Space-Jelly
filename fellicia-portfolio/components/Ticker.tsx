@@ -13,7 +13,7 @@ export default function Ticker() {
   );
   return (
     <div className="ticker" aria-label="Areas of professional experience">
-      <div className="ticker-track">
+      <div className="ticker-track" data-marquee data-speed="46" data-dir="1">
         {run(false)}
         {run(true)}
         {run(true)}
