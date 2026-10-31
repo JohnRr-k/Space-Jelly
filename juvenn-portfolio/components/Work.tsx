@@ -8,7 +8,7 @@ import ProjectModal from "./ProjectModal";
 import { projects, type Img, type Project } from "@/lib/content";
 import { useShell } from "./shell-context";
 import { site, mailto } from "@/lib/site";
-import { useMedia } from "@/lib/useMedia";
+import { useIsFile, useMedia } from "@/lib/useMedia";
 
 type Open = (slug: string, o: { x: number; y: number }) => void;
 
@@ -38,6 +38,7 @@ function Poster({ img, className, rot = 0, onOpen, delay = 0 }: { img: Img; clas
 
 function SlideText({ p, onOpen, go, align = "left" }: { p: Project; onOpen: Open; go: (h: string, l?: string) => void; align?: "left" | "right" }) {
   const btn = useRef<HTMLButtonElement>(null);
+  const isFile = useIsFile();
   return (
     <div className={`relative z-10 w-full lg:w-[27vw] lg:max-w-[460px] ${align === "right" ? "lg:text-left" : ""}`}>
       <p className="display text-[clamp(3.6rem,8vw,8rem)] leading-[0.8] text-transparent [-webkit-text-stroke:1.5px_rgba(255,255,255,0.55)]" aria-hidden>{p.index}</p>
@@ -58,9 +59,11 @@ function SlideText({ p, onOpen, go, align = "left" }: { p: Project; onOpen: Open
         >
           Open highlight <span className="arrow" aria-hidden>↗</span>
         </button>
-        <a href={`/work/${p.slug}/`} onClick={(e) => { e.preventDefault(); go(`/work/${p.slug}/`, p.title); }} className="link-u text-sm font-semibold">
-          Full case study →
-        </a>
+        {!isFile && (
+          <a href={`/work/${p.slug}/`} onClick={(e) => { e.preventDefault(); go(`/work/${p.slug}/`, p.title); }} className="link-u text-sm font-semibold">
+            Full case study →
+          </a>
+        )}
       </div>
     </div>
   );
@@ -165,6 +168,11 @@ export default function Work() {
   });
 
   const open: Open = (slug, o) => setModal({ slug, ...o });
+  useEffect(() => {
+    const h = (e: Event) => setModal({ slug: (e as CustomEvent<{ slug: string }>).detail.slug, x: window.innerWidth / 2, y: window.innerHeight / 2 });
+    window.addEventListener("jer-open-project", h);
+    return () => window.removeEventListener("jer-open-project", h);
+  }, []);
   const current = modal ? projects.find((p) => p.slug === modal.slug) : null;
 
   return (

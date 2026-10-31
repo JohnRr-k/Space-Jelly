@@ -49,7 +49,7 @@ export default function Hero() {
       id="top"
       ref={ref}
       style={reduce ? undefined : { visibility: vis }}
-      className="relative z-0 h-auto min-h-[100svh] overflow-hidden lg:sticky lg:top-0 lg:h-[100svh]"
+      className="relative z-0 h-auto min-h-[100svh] overflow-hidden lg:sticky lg:top-0 lg:h-[calc(100svh+var(--radius-panel))]"
       onMouseMove={(e) => {
         if (reduce) return;
         const r = e.currentTarget.getBoundingClientRect();
@@ -64,7 +64,7 @@ export default function Hero() {
       <span className="reg left-6 top-24 text-white" aria-hidden />
       <span className="reg right-6 top-24 text-white" aria-hidden />
 
-      <motion.div style={reduce ? undefined : { opacity: fade, scale, y: lift }} className="wrap relative flex min-h-[100svh] flex-col pb-32 pt-28 lg:h-full lg:pb-28 lg:pt-28">
+      <motion.div style={reduce ? undefined : { opacity: fade, scale, y: lift }} className="wrap relative flex min-h-[100svh] flex-col pb-32 pt-28 lg:h-full lg:pb-[calc(7rem+var(--radius-panel))] lg:pt-28">
         <div className="grid flex-1 items-center gap-10 lg:grid-cols-12">
           {/* copy */}
           <div className="relative z-10 lg:col-span-8">
@@ -163,7 +163,7 @@ export default function Hero() {
       </motion.div>
 
       {/* running skills ribbon */}
-      <div className="absolute inset-x-0 bottom-0 z-10 -rotate-[1.2deg] bg-coral-500 py-2.5 text-white shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.6)]" aria-hidden>
+      <div className="absolute inset-x-0 bottom-[calc(var(--radius-panel)+0.5rem)] z-10 -rotate-[1.2deg] bg-coral-500 py-2.5 text-white shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.6)]" aria-hidden>
         <Marquee speed={55}>
           {[...words, ...words].map((w, i) => (
             <span key={i} className="display-lc flex items-center gap-6 pr-6 text-[clamp(1rem,2vw,1.5rem)] uppercase">

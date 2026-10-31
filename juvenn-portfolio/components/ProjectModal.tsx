@@ -7,6 +7,7 @@ import { projects, type Project } from "@/lib/content";
 import { ProjectSpecial } from "./ProjectModules";
 import { useShell } from "./shell-context";
 import { Rise } from "./motion-kit";
+import { useIsFile } from "@/lib/useMedia";
 
 type Props = { project: Project; origin: { x: number; y: number }; onClose: () => void; onSwitch: (slug: string) => void };
 
@@ -33,6 +34,7 @@ export default function ProjectModal({ project, origin, onClose, onSwitch }: Pro
   const idx = projects.findIndex((p) => p.slug === project.slug);
   const next = projects[(idx + 1) % projects.length];
   const closing = useRef(false);
+  const isFile = useIsFile();
 
   const requestClose = () => {
     if (closing.current) return;
@@ -152,13 +154,13 @@ export default function ProjectModal({ project, origin, onClose, onSwitch }: Pro
           </div>
 
           <div className="mt-10 flex flex-wrap items-center gap-3">
-            <button type="button" className="btn" onClick={() => {
+            {!isFile && <button type="button" className="btn" onClick={() => {
                 closing.current = true;
                 window.history.replaceState({ ...window.history.state, jerModal: undefined }, "");
                 go(`/work/${project.slug}/`, project.title);
               }}>
               Read the full case study <span className="arrow" aria-hidden>↗</span>
-            </button>
+            </button>}
             <button type="button" className="btn btn-ghost" onClick={() => onSwitch(next.slug)}>
               Next: {next.title.length > 26 ? next.title.slice(0, 24) + "…" : next.title} <span className="arrow" aria-hidden>→</span>
             </button>

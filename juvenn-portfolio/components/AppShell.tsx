@@ -66,6 +66,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   const go = useCallback(
     (href: string, lbl = "") => {
+      // Opened straight from disk (file://): there are no sibling pages, so case studies open as highlights.
+      if (window.location.protocol === "file:") {
+        const m = /^\/work\/([^/#]+)/.exec(href);
+        if (m) window.dispatchEvent(new CustomEvent("jer-open-project", { detail: { slug: m[1] } }));
+        else scrollTo(href.includes("#") ? "#" + href.split("#")[1] : 0);
+        return;
+      }
       if (href.startsWith("#")) {
         scrollTo(href);
         history.replaceState(null, "", href);

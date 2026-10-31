@@ -50,3 +50,7 @@ NEXT_PUBLIC_SITE_URL=https://your-domain.example npm run build
 - The phone number in the PDF is intentionally **not** published.
 - `public/Juvenn_Ravelliyo_Portfolio.pdf` is the supplied PDF, offered as "View Portfolio PDF" (not as a CV).
 - Source-text tidy-ups: the PDF's "Keeping that bites." is shown as "Keep what bites."; "Guidebook" appears as "Handbook" to match the body text.
+
+## Single-file version
+
+`npm run build && python3 scripts/build-single-html.py` writes `Juvenn-Ravelliyo-Portfolio.html`: one file with scripts, CSS, fonts, images and the PDF embedded, which opens by double-click (no server). Opened from disk, case studies open as the highlight pop-ups because there are no sibling pages.

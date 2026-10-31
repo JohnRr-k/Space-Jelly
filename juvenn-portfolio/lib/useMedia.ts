@@ -14,3 +14,12 @@ export function useMedia(query: string): boolean {
     () => false,
   );
 }
+
+/** True when the page is opened straight from disk (file://), e.g. the single-file build. */
+export function useIsFile(): boolean {
+  return useSyncExternalStore(
+    () => () => {},
+    () => window.location.protocol === "file:",
+    () => false,
+  );
+}
