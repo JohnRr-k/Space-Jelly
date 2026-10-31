@@ -1,0 +1,29 @@
+{
+  "name": "fellicia-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal legal portfolio of Fellicia Angelica Kholim, S.H., CLA.",
+  "scripts": {
+    "prepare:assets": "node scripts/prepare-assets.mjs",
+    "dev": "npm run prepare:assets && next dev",
+    "build": "npm run prepare:assets && next build",
+    "build:public": "PUBLIC_MODE=true npm run build",
+    "start": "npx serve out -l 3000",
+    "lint": "tsc --noEmit",
+    "build:single": "npm run prepare:assets && next build --webpack && node scripts/make-single-file.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "next": "^16.4.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "serve": "^14.2.6",
+    "typescript": "^7.0.2"
+  }
+}
