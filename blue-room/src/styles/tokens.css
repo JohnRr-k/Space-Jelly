@@ -1,0 +1,135 @@
+/* Design tokens. Blue is the identity; three "intensities" share one structure. */
+:root {
+  /* palette (from the brief, lightly refined) */
+  --c-mist: #dceef5;
+  --c-cloud: #f7fbfd;
+  --c-glass: #b8dce8;
+  --c-ocean: #76b7d1;
+  --c-deep: #14547b;
+  --c-midnight: #092b49;
+  --c-silver: #c5d2db;
+  --c-moon: #8496a5;
+  --c-white: #ffffff;
+  --c-lavender: #dcdff4;
+  --c-aqua: #cdeeee;
+  --c-pearl: #e9eef2;
+  --c-periwinkle: #aab6e8;
+
+  --font-sans: 'Manrope Variable', 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Newsreader Variable', 'Newsreader', Georgia, 'Times New Roman', serif;
+
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 26px;
+  --r-pill: 999px;
+
+  --ease: cubic-bezier(0.22, 0.7, 0.2, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-1: 140ms;
+  --dur-2: 260ms;
+  --dur-3: 520ms;
+
+  --nav-w: 232px;
+  --nav-w-collapsed: 76px;
+  --topbar-h: 64px;
+  --bottomnav-h: 68px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --content-max: 1180px;
+
+  color-scheme: light;
+}
+
+/* ---------- Mist (default): soft, bright, airy ---------- */
+:root,
+:root[data-theme='mist'] {
+  --bg: #dceef5;
+  --bg-grad: radial-gradient(1200px 700px at 12% -10%, #f2f9fc 0%, rgba(242, 249, 252, 0) 60%),
+    radial-gradient(900px 600px at 100% 0%, #c9e5f0 0%, rgba(201, 229, 240, 0) 60%), linear-gradient(180deg, #dceef5 0%, #cfe6f0 100%);
+  --surface: #f7fbfd;
+  --surface-2: #edf6fa;
+  --surface-3: #e0eef5;
+  --surface-raised: #ffffff;
+  --line: #d0dee7;
+  --line-strong: #b3c8d6;
+  --ink: #0c2a45;
+  --ink-2: #3f5d76;
+  --ink-3: #587389;
+  --accent: #14547b;
+  --accent-hover: #0f4666;
+  --accent-ink: #ffffff;
+  --accent-soft: #76b7d1;
+  --accent-wash: #e1f0f7;
+  --accent-text: #14547b;
+  --focus: #2b86b8;
+  --danger: #9b3f55;
+  --danger-wash: #f6e4e8;
+  --ok: #1d7567;
+  --ok-wash: #dbf0ec;
+  --warn: #8a5f17;
+  --warn-wash: #f6ecd7;
+  --nav-bg: linear-gradient(180deg, #eaf5fa 0%, #d6eaf2 100%);
+  --nav-ink: #0c2a45;
+  --nav-active: #ffffff;
+  --shadow-1: 0 1px 2px rgba(9, 43, 73, 0.06), 0 2px 8px rgba(9, 43, 73, 0.05);
+  --shadow-2: 0 4px 14px rgba(9, 43, 73, 0.08), 0 12px 32px rgba(9, 43, 73, 0.07);
+  --shadow-3: 0 18px 60px rgba(9, 43, 73, 0.22);
+  --scrim: rgba(7, 33, 56, 0.5);
+  --paper: #fffdf8;
+  --paper-line: #e9e4d6;
+}
+
+/* ---------- Tide: a richer blue canvas, same calm surfaces ---------- */
+:root[data-theme='tide'] {
+  --bg: #a8cfe0;
+  --bg-grad: radial-gradient(1100px 700px at 10% -10%, #d3ebf4 0%, rgba(211, 235, 244, 0) 60%),
+    radial-gradient(900px 600px at 100% 10%, #7fb5cf 0%, rgba(127, 181, 207, 0) 65%), linear-gradient(180deg, #a8cfe0 0%, #86bad3 100%);
+  --surface: #f3f9fc;
+  --surface-2: #e5f1f7;
+  --surface-3: #d6e8f1;
+  --line: #bfd5e1;
+  --line-strong: #9fbccd;
+  --ink-3: #4d6a80;
+  --nav-bg: linear-gradient(180deg, #2c7399 0%, #185779 100%);
+  --nav-ink: #eaf6fb;
+  --nav-active: rgba(255, 255, 255, 0.18);
+  --paper: #fffdf8;
+}
+
+/* ---------- Deep: night ocean ---------- */
+:root[data-theme='deep'] {
+  color-scheme: dark;
+  --bg: #061a2e;
+  --bg-grad: radial-gradient(1000px 700px at 15% -10%, #0f3a5e 0%, rgba(15, 58, 94, 0) 60%), linear-gradient(180deg, #061a2e 0%, #04121f 100%);
+  --surface: #0c2842;
+  --surface-2: #11334f;
+  --surface-3: #174059;
+  --surface-raised: #123550;
+  --line: #1e4767;
+  --line-strong: #2d5f84;
+  --ink: #e6f2f8;
+  --ink-2: #b2cbdb;
+  --ink-3: #8eadc1;
+  --accent: #8ccbe3;
+  --accent-hover: #a5d8ec;
+  --accent-ink: #052036;
+  --accent-soft: #3c86a8;
+  --accent-wash: #123c58;
+  --accent-text: #9bd3e8;
+  --focus: #8ccbe3;
+  --danger: #f0a3b4;
+  --danger-wash: #3b1f2b;
+  --ok: #7fd6c5;
+  --ok-wash: #123b37;
+  --warn: #e8c987;
+  --warn-wash: #3b3118;
+  --nav-bg: linear-gradient(180deg, #0a2540 0%, #071b30 100%);
+  --nav-ink: #dbeaf3;
+  --nav-active: rgba(140, 203, 227, 0.16);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-2: 0 6px 18px rgba(0, 0, 0, 0.35), 0 14px 36px rgba(0, 0, 0, 0.3);
+  --shadow-3: 0 18px 60px rgba(0, 0, 0, 0.55);
+  --scrim: rgba(2, 10, 20, 0.66);
+  --paper: #14324c;
+  --paper-line: #1e4767;
+}
