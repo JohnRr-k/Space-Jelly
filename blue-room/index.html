@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="theme-color" content="#dceef5" />
+    <meta name="description" content="The Blue Room — a private, local-first personal sanctuary." />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <title>The Blue Room</title>
+    <script>
+      // Apply the saved theme before first paint to avoid a flash.
+      try {
+        var t = localStorage.getItem('blueroom.theme');
+        if (t === 'tide' || t === 'deep' || t === 'mist') document.documentElement.dataset.theme = t;
+        if (localStorage.getItem('blueroom.motion') === 'off') document.documentElement.dataset.motion = 'off';
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>The Blue Room needs JavaScript to run. Nothing is sent anywhere — all of your data stays in this browser.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
