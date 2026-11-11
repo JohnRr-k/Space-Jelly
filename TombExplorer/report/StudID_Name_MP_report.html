@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>StudID_Name_MP_report</title>
+<style>
+@page { size: A4; margin: 17mm 15mm 17mm 15mm; }
+* { box-sizing: border-box; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { font-family: "Liberation Sans", "DejaVu Sans", Arial, sans-serif; font-size: 10pt; line-height: 1.42; color: #1b1f24; margin: 0; }
+h1 { font-size: 21pt; margin: 0 0 4px; color: #1f3558; line-height: 1.15; }
+h2 { font-size: 14pt; color: #1f3558; border-bottom: 1.6px solid #2b4c7e; padding-bottom: 2px; margin: 20px 0 8px; break-after: avoid; }
+h3 { font-size: 11pt; color: #1f3558; margin: 14px 0 4px; break-after: avoid; }
+p { margin: 5px 0; }
+ul, ol { margin: 4px 0 6px; padding-left: 20px; } li { margin: 2px 0; }
+code { font-family: "DejaVu Sans Mono", "Liberation Mono", monospace; font-size: 8.6pt; background: #eef1f5; padding: 0 2px; border-radius: 2px; }
+pre { font-family: "DejaVu Sans Mono", "Liberation Mono", monospace; margin: 0; }
+pre.code { background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 4px; padding: 6px 9px; font-size: 7.9pt; line-height: 1.32; white-space: pre-wrap; break-inside: avoid; }
+.termwrap { margin: 6px 0; break-inside: avoid; }
+.termtitle { font-size: 8pt; color: #fff; background: #3b4a61; padding: 2px 8px; border-radius: 4px 4px 0 0; font-family: "DejaVu Sans Mono", monospace; }
+pre.term { background: #f6f8fa; border: 1px solid #c8d0da; border-top: 0; border-radius: 0 0 4px 4px; padding: 5px 8px; font-size: 7.6pt; line-height: 1.24; white-space: pre; overflow: hidden; }
+.in { color: #0a58b6; font-weight: 700; }
+.marker { color: #7b8492; font-style: italic; }
+table { border-collapse: collapse; width: 100%; font-size: 8.8pt; margin: 6px 0; break-inside: auto; }
+tr { break-inside: avoid; }
+th, td { border: 1px solid #c8d0da; padding: 3px 6px; vertical-align: top; text-align: left; }
+th { background: #eaf0f8; color: #1f3558; }
+td.ok { color: #1c6b33; font-weight: 700; white-space: nowrap; }
+figure { margin: 8px 0; break-inside: avoid; }
+figcaption { font-size: 8.6pt; color: #4a525e; margin-top: 2px; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; align-items: start; }
+.cols .termwrap { min-width: 0; }
+.box { border: 1px solid #c8d0da; border-left: 4px solid #2b4c7e; background: #f7f9fc; padding: 6px 10px; margin: 8px 0; break-inside: avoid; }
+.box.warn { border-left-color: #b38f00; background: #fffbe8; }
+.fill { background: #fff1a8; outline: 1px dashed #b38f00; padding: 0 3px; }
+.meta td { border: 0; padding: 1px 6px 1px 0; font-size: 10pt; }
+.small { font-size: 8.8pt; color: #4a525e; }
+.titleblock { border-bottom: 3px solid #1f3558; padding-bottom: 8px; margin-bottom: 8px; }
+</style></head><body>
+<!-- Highlighted yellow spans (class="fill") are the places YOU must complete. Search for: class="fill"
+     Then open this file in Chrome/Edge -> Print -> Destination "Save as PDF", paper A4, margins "Default",
+     enable "Background graphics". Name the PDF StudID_Name_MP_report.pdf (real ID and name). -->
+
+<div class="titleblock">
+<h1>EE231001 Introduction to Programming<br>Midterm Project Report: Tomb Explorer</h1>
+<table class="meta"><tr><td><b>Student ID</b></td><td><span class="fill">[your student ID]</span></td><td><b>Name</b></td><td><span class="fill">[your name]</span></td></tr>
+<tr><td><b>Course</b></td><td>EE231001, Prof. Andy (Yu-Guang Chen)</td><td><b>Due</b></td><td>2026/11/22 23:59:59</td></tr>
+<tr><td><b>Files</b></td><td colspan="3"><code>StudID_Name_MP.cpp</code> (basic, 393 lines) &nbsp; <code>StudID_Name_MP_bonus.cpp</code> (bonus, 607 lines)</td></tr></table>
+</div>
+
+<div class="box"><b>Summary.</b> Both programs are complete C++11 implementations of the project specification. The basic program covers every
+section of the PDF (seeded dungeon generation with BFS validation, hearts / stamina / backpack rules, monsters, weapons and drops, the
+recursive DFS for the theoretical maximum value, and the exact input/output format). The bonus program adds the Automatic Pathfinding
+Mode (<code>r</code>) as a breadth-first search over <i>game states</i>, so the best route is found without enumerating paths.
+<b>The source code was written with an AI coding assistant</b>; Section 3 explains exactly how.</div>
+
+<!-- ================================================================== 1 -->
+<h2>1. How to compile and run</h2>
+<p><b>Environment.</b> GNU g++ with the C++11 standard (the grading workstation setup). The development machine used g++ 13.3.0 on Ubuntu.
+Only the standard library is used (<code>iostream, iomanip, string</code>, plus <code>vector</code> in the bonus).</p>
+<table>
+<tr><th style="width:17%">Version</th><th>Compile</th><th style="width:22%">Run</th></tr>
+<tr><td>Basic</td><td><code>g++ -std=c++11 -Wall -Wextra -o PA_studID.out StudID_Name_MP.cpp</code></td><td rowspan="2"><code>./PA_studID.out</code><br>or with a prepared input file:<br><code>./PA_studID.out &lt; case.in</code></td></tr>
+<tr><td>Bonus</td><td><code>g++ -std=c++11 -Wall -Wextra -o PA_studID.out StudID_Name_MP_bonus.cpp</code></td></tr>
+</table>
+<p><b>Input.</b> The program prompts for the seed, the backpack capacity, then one <i>weight value</i> pair for each of the six treasures and the three
+monster drops; after that it reads one command per prompt (<code>w a s d</code>, plus <code>r</code> in the bonus) and <code>y</code>/<code>n</code>
+at item prompts. Because tokens are read with <code>cin &gt;&gt;</code>, an input file may separate tokens by spaces or newlines. The complete
+input of the winning game shown below (setup, 40 moves and the four <code>y</code>/<code>n</code> answers) is:</p>
+<pre class="code">12345 30 3 50 4 60 2 30 5 80 1 10 6 70 2 40 3 45 1 20 s d s s y w d d d d d d d d y a a a s a s y s s y s s s s d d d s s s s s d d d d d d d</pre>
+<p>When input is redirected from a file nothing echoes the typed characters, so the prompts follow each other on one line; in an interactive terminal the
+typed input appears after each prompt as in the figures below (typed input is shown in <span class="in">blue</span>; the captures were made with the real
+programs, seed 12345, capacity 30, treasure/drop weight-value pairs 3 50 / 4 60 / 2 30 / 5 80 / 1 10 / 6 70 / 2 40 / 3 45 / 1 20).</p>
+
+<figure><div class="cols">
+<div><div class="termwrap "><div class="termtitle">seed 12345, capacity 30 (setup, first display)</div><pre class="term">=============
+Tomb Explorer
+=============
+Seed: <span class="in">12345</span>
+Backpack capacity: <span class="in">30</span>
+Treasure 1 weight and value: <span class="in">3 50</span>
+Treasure 2 weight and value: <span class="in">4 60</span>
+Treasure 3 weight and value: <span class="in">2 30</span>
+Treasure 4 weight and value: <span class="in">5 80</span>
+Treasure 5 weight and value: <span class="in">1 10</span>
+Treasure 6 weight and value: <span class="in">6 70</span>
+Monster Z drop weight and value: <span class="in">2 40</span>
+Monster V drop weight and value: <span class="in">3 45</span>
+Monster W drop weight and value: <span class="in">1 20</span>
+##################
+#U....###....#.###
+#....#.#w#....#..#
+##........6...#.##
+##2.....#.#..##..#
+#..###3##..#.#..##
+##..##.#.....###.#
+#....#5###4###.#.#
+#.##.#v#.#.#.#.#.#
+#1...#.#.#.#WZ.V##
+#.###...####..####
+######.......#.#.#
+#...#####..###...#
+##.#...#...##....#
+#####.##...####.##
+#...##.##..###z..#
+##.#.#..........E#
+##################
+========== Status ==========
+Hearts: 3 / 3
+Stamina: 45 / 45
+Weapons: z[N] v[N] w[N]
+Total Value: 0
+Backpack Weight: 0 / 30
+Steps: 0
+============================
+Command [w/a/s/d]: <span class="in"></span></pre></div></div>
+<div><div class="termwrap "><div class="termtitle">invalid command, border, wall</div><pre class="term">Command [w/a/s/d]: <span class="in">x</span>
+Invalid command.
+Command [w/a/s/d]: <span class="in">w</span>
+You cannot move outside the map.
+Command [w/a/s/d]: <span class="in">d</span>
+<span class="marker">   ... 3 more uneventful moves (d d d) ...</span>
+Command [w/a/s/d]: <span class="in">d</span>
+You hit a wall.
+Command [w/a/s/d]: <span class="in"></span></pre></div><div class="termwrap "><div class="termtitle">treasure prompt (invalid answer, then y)</div><pre class="term"><span class="marker">   ... 7 more uneventful moves (s s d d d d d) ...</span>
+Command [w/a/s/d]: <span class="in">d</span>
+You found Treasure 6.
+Weight: 6, Value: 70
+Take it [y/n]: <span class="in">q</span>
+Please enter y or n.
+Take it [y/n]: <span class="in">y</span>
+Item collected.
+Command [w/a/s/d]: <span class="in"></span></pre></div><div class="termwrap "><div class="termtitle">monster without its weapon</div><pre class="term"><span class="marker">   ... 10 more uneventful moves (s s d d d d d d w d) ...</span>
+Command [w/a/s/d]: <span class="in">w</span>
+Monster Z blocked you.
+You need weapon z and lost 1 heart.
+Command [w/a/s/d]: <span class="in"></span></pre></div></div>
+</div>
+<figcaption><b>Figure 1.</b> Left: the initialisation output, the first map (18 x 18 with the wall border; <code>U</code> = player, <code>S</code> start, <code>E</code> exit,
+digits = treasures, <code>Z V W</code> monsters, <code>z v w</code> weapons), the status block and the first prompt. Right: invalid command, border and wall bumps (free), a treasure prompt with an invalid
+answer, and a monster attack without the weapon (the heart and stamina cost can be read from the status block that follows). After every command the 26-line map + status display is printed again; it is
+omitted in the excerpts to save space.</figcaption></figure>
+
+<figure><div class="cols">
+<div><div class="termwrap "><div class="termtitle">a complete winning game (compacted)</div><pre class="term">Command [w/a/s/d]: <span class="in">s</span>
+<span class="marker">   ... 2 more uneventful moves (d s) ...</span>
+Command [w/a/s/d]: <span class="in">s</span>
+You found Treasure 2.
+Weight: 4, Value: 60
+Take it [y/n]: <span class="in">y</span>
+Item collected.
+Command [w/a/s/d]: <span class="in">w</span>
+<span class="marker">   ... 7 more uneventful moves (d d d d d d d) ...</span>
+Command [w/a/s/d]: <span class="in">d</span>
+You found Treasure 6.
+Weight: 6, Value: 70
+Take it [y/n]: <span class="in">y</span>
+Item collected.
+Command [w/a/s/d]: <span class="in">a</span>
+<span class="marker">   ... 4 more uneventful moves (a a s a) ...</span>
+Command [w/a/s/d]: <span class="in">s</span>
+You found Treasure 3.
+Weight: 2, Value: 30
+Take it [y/n]: <span class="in">y</span>
+Item collected.
+Command [w/a/s/d]: <span class="in">s</span>
+Command [w/a/s/d]: <span class="in">s</span>
+You found Treasure 5.
+Weight: 1, Value: 10
+Take it [y/n]: <span class="in">y</span>
+Item collected.
+Command [w/a/s/d]: <span class="in">s</span>
+You picked up weapon v.
+Command [w/a/s/d]: <span class="in">s</span>
+<span class="marker">   ... 16 more uneventful moves (s s d d d s s s s s d d d d d d) ...</span>
+Command [w/a/s/d]: <span class="in">d</span>
+====================================
+Tomb Explorer Result
+====================================
+You escaped the tomb.
+Final Value: 170
+Theoretical Max Value: 405
+Mission Completeness: 42.0%
+Backpack Weight: 13 / 30
+Hearts: 3 / 3
+Stamina: 5 / 45
+Weapons: z[N] v[Y] w[N]
+Total Steps: 40
+====================================</pre></div></div>
+<div><div class="termwrap "><div class="termtitle">final status and result block</div><pre class="term">========== Status ==========
+Hearts: 3 / 3
+Stamina: 5 / 45
+Weapons: z[N] v[Y] w[N]
+Total Value: 170
+Backpack Weight: 13 / 30
+Steps: 40
+============================
+====================================
+Tomb Explorer Result
+====================================
+You escaped the tomb.
+Final Value: 170
+Theoretical Max Value: 405
+Mission Completeness: 42.0%
+Backpack Weight: 13 / 30
+Hearts: 3 / 3
+Stamina: 5 / 45
+Weapons: z[N] v[Y] w[N]
+Total Steps: 40
+====================================
+</pre></div></div>
+</div>
+<figcaption><b>Figure 2.</b> Left: a complete winning game (the 40-move route computed by the bonus planner, typed by hand into the <i>basic</i> program; runs of uneventful moves are merged). Right: the final
+map, status and result block printed when the exit is reached. Final value 170 of a theoretical maximum 405 (42.0%).</figcaption></figure>
+
+<!-- ================================================================== 2 -->
+<h2>2. Completion of the assignment</h2>
+<p>Every requirement of the PDF is implemented. The table maps each specification section to the code (function names refer to the source files).</p>
+<table>
+<tr><th style="width:21%">Specification</th><th>Implementation</th><th style="width:9%">Status</th></tr>
+<tr><td>2 Random number generator</td><td><code>seedRng()</code>, <code>getRandomNum()</code>: state = seed mod 2<sup>31</sup>; next = (state &middot; 1103515245 + 12345) mod 2<sup>31</sup>; returns <code>state &gt;&gt; 16</code>. 64-bit arithmetic, so the product cannot overflow.</td><td class="ok">Done</td></tr>
+<tr><td>3 Map generation, steps 1-2</td><td><code>generateWalls()</code>: 256 cells left-to-right, top-to-bottom, each a wall with 40% probability; then <code>S</code> at (0,0) and <code>E</code> at (15,15) are forced.</td><td class="ok">Done (decision D1)</td></tr>
+<tr><td>Steps 3-4 BFS, shortest path</td><td><code>runBfs()</code>: 4-direction BFS fills <code>reachable[][]</code> and <code>dist[][]</code> and returns D. <code>buildDungeon()</code> rejects the dungeon and draws the next one from the same random stream until the exit is reachable.</td><td class="ok">Done</td></tr>
+<tr><td>Step 5 Object placement</td><td><code>placeObject()</code> in the order 1-6, Z, V, W, z, v, w; row = rand % 16, then col = rand % 16; retried until the cell is reachable and still <code>.</code>.</td><td class="ok">Done</td></tr>
+<tr><td>4 Movement</td><td><code>handleMove()</code>: w/a/s/d only; border and wall bumps print a message and cost nothing; any other token is <i>Invalid command.</i></td><td class="ok">Done</td></tr>
+<tr><td>5-7 Hearts, monsters, weapons, drops</td><td>Monster without its weapon: -1 heart, -1 stamina, +1 step, monster and player stay. With the weapon: <i>You defeated monster X.</i>, the player moves in and the cell becomes the drop (<code>a/b/c</code>). Weapons are picked up automatically, are permanent and weigh nothing.</td><td class="ok">Done</td></tr>
+<tr><td>8-9 Treasures, backpack</td><td><code>offerItem()</code>: prints name, weight, value, asks <i>Take it [y/n]:</i> (upper case accepted), repeats on invalid answers, checks total weight &le; capacity; declined or too-heavy items stay on the map.</td><td class="ok">Done</td></tr>
+<tr><td>10 Stamina</td><td>Max stamina = ceil(1.5 D) computed as <code>(3D+1)/2</code>; each successful move or monster-blocked attempt costs 1; wall/border bumps are free.</td><td class="ok">Done</td></tr>
+<tr><td>11 Theoretical maximum value</td><td><code>searchBestValue()</code>: <b>recursive DFS</b> over take/skip for the 9 items, pruned by capacity and by an optimistic bound (value so far + all remaining positive values cannot beat the best).</td><td class="ok">Done</td></tr>
+<tr><td>12 Mission completeness</td><td>collected / maximum &times; 100 with exactly one decimal digit; 0.0% when the maximum is 0.</td><td class="ok">Done</td></tr>
+<tr><td>13-14 Win / lose</td><td>Entering <code>E</code> ends the game as a win; hearts = 0 or stamina = 0 ends it as a loss, with the specified messages and final result block.</td><td class="ok">Done</td></tr>
+<tr><td>Input / output format</td><td>All prompts, messages, the status block and the result block follow the PDF text.</td><td class="ok">Done</td></tr>
+<tr><td>Bonus</td><td>Automatic Pathfinding Mode in <code>StudID_Name_MP_bonus.cpp</code> (Section 5).</td><td class="ok">Done</td></tr>
+</table>
+
+<h3>Restrictions</h3>
+<table>
+<tr><th style="width:30%">Restriction</th><th>How it is met</th></tr>
+<tr><td>At least one recursive function</td><td><code>searchBestValue()</code> calls itself for the "take" and the "skip" branch.</td></tr>
+<tr><td>No <code>struct</code> / <code>class</code></td><td>None is declared (checked with a search of both files). A map cell is the integer <code>row*16+col</code>; the BFS queues and the bonus search records are plain arrays / <code>vector&lt;int&gt;</code>; the game state lives in global variables.</td></tr>
+<tr><td>No brute force</td><td>Reachability is a BFS; the knapsack DFS prunes; the bonus planner searches the space of <i>states</i> (about 10<sup>4</sup>-10<sup>5</sup> in practice) instead of the space of <i>paths</i> (up to 4<sup>45</sup> &asymp; 10<sup>27</sup> walks within the stamina limit).</td></tr>
+<tr><td>g++, C++11, naming</td><td>Compiled with <code>-std=c++11</code>. The files are named <code>StudID_Name_MP.cpp</code> / <code>StudID_Name_MP_bonus.cpp</code> in the repository and must be renamed with the real ID and name for submission.</td></tr>
+</table>
+
+<h3>Testing and verification</h3>
+<p>No reference implementation or sample expected output was available, so correctness was checked by <i>differential testing</i>: independent Python re-implementations of the game rules and of the bonus planner
+(a different algorithm: layered sets, backward marking of optimal states, forward greedy walk) were fed the same random input streams as the C++ programs and the full transcripts were compared character by character.</p>
+<table>
+<tr><th style="width:27%">Check</th><th>Result</th></tr>
+<tr><td>Compiler warnings</td><td>0 warnings with <code>-std=c++11 -Wall -Wextra -Wpedantic -Wshadow -Wconversion</code> (both files).</td></tr>
+<tr><td>Basic program vs. oracle</td><td>450 random games (invalid commands, border and wall bumps, monster hits, invalid/upper-case answers, negative and &gt; 2<sup>31</sup> seeds, capacities 0-39): <b>0 mismatches</b>. Endings: 141 escapes, 228 hearts, 81 stamina.</td></tr>
+<tr><td>Bonus program vs. oracle</td><td>1,660 random games, the planner was triggered in 1,305 of them (at the start or after manual play with item pick-ups, weapon pick-ups and lost hearts); 216 of those found no route: <b>0 mismatches</b> in route, value, weight, per-step events and final result.</td></tr>
+<tr><td>Memory/UB checks</td><td>All fuzz runs used AddressSanitizer + UndefinedBehaviorSanitizer builds: no reports.</td></tr>
+<tr><td>Scenario coverage (399 auto runs from the start)</td><td>166 chains weapon &rarr; monster &rarr; drop, 273 collected items, 154 "left it here", 250 weapon pick-ups, 64 "no route".</td></tr>
+<tr><td>Auto vs. manual consistency</td><td>The planner's 40-move route (seed 12345) typed manually into the basic program ends with exactly the predicted value 170, weight 13 / 30 and 40 steps (Figure 2).</td></tr>
+<tr><td>Speed / memory of the planner</td><td>about 10 ms and 13 MB peak even with an oversized backpack (capacity 1000).</td></tr>
+</table>
+<div class="box warn"><b>Limits of this evidence.</b> The oracles were written from the same reading of the PDF as the programs, so they catch coding mistakes but not a different interpretation of an ambiguous sentence.
+The decisions below are those interpretations. <span class="fill">[Student: after running the course's public test cases, write the result here. They were not available when this draft was prepared.]</span></div>
+
+<h3>Interpretation decisions (where the PDF is silent)</h3>
+<table>
+<tr><th style="width:5%">#</th><th style="width:30%">Question</th><th>Choice (and where to change it)</th></tr>
+<tr><td>D1</td><td>How does the random number become "40% wall"?</td><td><code>getRandomNum() % 100 &lt; 40</code> (constant <code>WALL_PERCENT</code> in <code>generateWalls()</code>). The common alternative is <code>% 10 &lt; 4</code>; it changes every dungeon.</td></tr>
+<tr><td>D2</td><td>Prompt layout</td><td>Prompts end with a space and no newline. The map and status are printed before <i>every</i> prompt, including after <i>Invalid command.</i>, wall and border bumps. After an invalid y/n answer the prompt <i>Take it [y/n]:</i> is repeated.</td></tr>
+<tr><td>D3</td><td>Order of end-of-move checks</td><td>Cell events (weapon, drop, treasure prompt) first; then exit reached = win (even with 0 stamina left); then stamina = 0 = loss. Hearts = 0 ends the game before the stamina check.</td></tr>
+<tr><td>D4</td><td>Letter case</td><td>Movement commands are lower case only; <code>y/n</code> accept <code>Y/N</code>; multi-character tokens are invalid.</td></tr>
+<tr><td>D5</td><td>Negative seeds</td><td>Normalised into [0, 2<sup>31</sup>) so that <code>% 16</code> can never be negative.</td></tr>
+<tr><td>D6</td><td>Bonus tie between plans that differ only in take/leave</td><td>"Take" is explored before "leave". No blank line is printed between <i>Route:</i> and <i>Auto Step 1</i>.</td></tr>
+<tr><td>D7</td><td>End of input</td><td>If stdin ends mid-game the program exits quietly instead of looping.</td></tr>
+</table>
+
+<!-- ================================================================== 3 -->
+<h2>3. How AI was used</h2>
+<div class="box"><b>Declaration.</b> The program source of both files, the README and the first draft of this report were produced with an AI coding assistant (<b>Claude Code</b>, by Anthropic), working from the project PDF.
+The AI also wrote and ran the test tools (Python oracles and fuzzers, not part of the submission). The same disclosure is written at the top of both source files.</div>
+
+<h3>What the AI did, step by step</h3>
+<ol>
+<li><b>Read the specification</b> (all 24 pages, including figures, output samples, the bonus chapter and the restrictions) and listed the points where the text is ambiguous (Section 2, D1-D7).</li>
+<li><b>Chose the architecture</b>: global arrays instead of structs; BFS for reachability; a recursive DFS for the theoretical maximum; for the bonus a BFS over packed game states instead of path enumeration.</li>
+<li><b>Wrote the basic program</b> (<code>StudID_Name_MP.cpp</code>), compiled it with strict warnings and smoke-tested it.</li>
+<li><b>Built a verification harness</b>: an independent Python implementation of the game and an adaptive fuzzer that drives the compiled program with a semi-intelligent bot and compares transcripts. The harness first had bugs of its own (a walker that kept typing movement keys into a y/n prompt; off-by-one coordinates while preparing the report captures); these were test-tool bugs, not program bugs.</li>
+<li><b>Wrote the bonus</b> by extending the basic file, then a second oracle with a different algorithm and ran the 1,660-game comparison. The only change made to the program after that was renaming a local variable to remove a <code>-Wshadow</code> warning; the tests were re-run afterwards.</li>
+<li><b>Drafted the README and this report</b>; all transcripts in the report are captured from the real programs.</li>
+</ol>
+
+<h3>Which parts of the code were AI-assisted</h3>
+<table>
+<tr><th style="width:36%">Part of the code</th><th style="width:16%">AI involvement</th><th>Reviewed / changed / verified by the student</th></tr>
+<tr><td>RNG, <code>generateWalls()</code>, <code>runBfs()</code>, <code>placeObject()</code>, <code>buildDungeon()</code></td><td>written by AI</td><td rowspan="6"><span class="fill">[Student: for each group of functions, state whether you read it line by line, whether you changed anything, and how you checked it yourself.]</span></td></tr>
+<tr><td><code>searchBestValue()</code>, <code>computeTheoreticalMax()</code> (recursion)</td><td>written by AI</td></tr>
+<tr><td>Output: <code>printMap()</code>, <code>printStatus()</code>, <code>printResult()</code></td><td>written by AI</td></tr>
+<tr><td><code>handleMove()</code>, <code>offerItem()</code>, <code>main()</code> loop</td><td>written by AI</td></tr>
+<tr><td>Bonus: <code>planRoute()</code>, <code>pushState()</code>, <code>packState()</code>, <code>runAutoMode()</code></td><td>written by AI</td></tr>
+<tr><td>Test tools, README, report draft</td><td>written by AI</td></tr>
+</table>
+<div class="box warn"><b>Student's own account (required by the course).</b> <span class="fill">[Student: describe in your own words how you used the AI and what you personally did. Cover: what you asked it, which parts you read and understood, anything you modified or re-wrote, what you compiled and tested yourself, and what you could and could not explain at the demo. Be specific and truthful; the course treats undisclosed AI help as plagiarism.]</span></div>
+
+<!-- ================================================================== 4 -->
+<h2>4. Difficulties and how they were overcome</h2>
+<h3>4.1 A specification with silent spots</h3>
+<p>Several details that decide the exact output are not in the PDF: how a random number becomes a 40% wall probability, whether prompts end in a newline, what is redisplayed after a rejected command, and what happens when stamina and hearts reach zero in the same move.
+Because the same seed must give the same dungeon, a wrong guess about the first one changes <i>every</i> map. <b>Approach:</b> each choice was made explicit (decisions D1-D7), isolated in one constant or one function so that it can be changed in one place, and documented.</p>
+
+<h3>4.2 The bonus: the number of paths explodes</h3>
+<p>The automatic mode must collect the maximum value within the remaining stamina. A search over <i>routes</i> has up to 4 choices per step and the stamina allows about 45 steps, i.e. up to 4<sup>45</sup> &asymp; 1.2&times;10<sup>27</sup> walks. That is brute force and is prohibited.
+<b>Approach:</b> search <i>states</i> instead. A state (Figure 3) is the player's cell, the weapons held, the monsters defeated and the items taken (23 bits). Everything else follows from it: weight and value from the items, steps used from the BFS depth, remaining stamina from the depth. The future of a state does not depend on how it was reached, so each state needs to be expanded only once.
+With visited flags the search touched a median of about 2&times;10<sup>4</sup> states (maximum 3.3&times;10<sup>5</sup> in 480 random instances), against 8,388,608 possible states, and takes about 10 ms.</p>
+<table>
+<tr><th>Backpack capacity</th><th>median states explored</th><th>95th percentile</th><th>maximum</th></tr>
+<tr><td>10</td><td>10,025</td><td>48,938</td><td>78,523</td></tr><tr><td>30</td><td>23,319</td><td>109,526</td><td>332,383</td></tr><tr><td>100</td><td>19,663</td><td>107,984</td><td>179,638</td></tr><tr><td>1000</td><td>20,004</td><td>103,482</td><td>210,456</td></tr>
+</table>
+<p class="small">120 random dungeons per capacity (random weights 1-7 and values 0-99), start-of-game search, measured with the Python oracle, which explores the same state set as the C++ planner.</p>
+
+<h3>4.3 Guaranteeing "fewest steps, then first found in the order s, w, d, a"</h3>
+<p>The rule is easy to state but easy to get subtly wrong. <b>Idea:</b> a BFS with "visited on discovery" reaches every state by its alphabetically smallest shortest route. By induction on the depth: entries of one depth are queued in the alphabetical order of their routes; children are generated parent by parent and direction by direction in the order <code>s, w, d, a</code>,
+so the next depth is queued in the same order, and the first discovery of a state is its smallest route. Moreover, on a shortest optimal route every state lies at its minimum depth (otherwise a shorter prefix would give a shorter route to the same goal state), so remembering one parent per state loses no optimal route.
+The goal state is therefore chosen by "highest value; then smallest depth; then earliest discovered" (strict comparisons while the BFS runs). This was confirmed against an oracle that finds the alphabetically smallest optimal route with a completely different method.</p>
+
+<h3>4.4 No <code>struct</code> or <code>class</code></h3>
+<p>A search state naturally wants a record. <b>Approach:</b> pack it into one <code>int</code> (<code>packState()</code>), keep the BFS queue as parallel <code>vector</code>s (state, parent, depth, move, took-item flag), and encode a map cell as <code>row*16+col</code>.</p>
+
+<h3>4.5 Verifying without a reference answer</h3>
+<p>With no sample output to compare to, the risk is bugs that are invisible on a few hand-played games. <b>Approach:</b> differential testing against independent implementations on thousands of random games (Section 2), plus a cross-check that mixes the two programs: the route found by the bonus is replayed by hand in the basic program and must reproduce the predicted value, weight and step count.</p>
+
+<!-- ================================================================== 5 -->
+<h2>5. Bonus: Automatic Pathfinding Mode</h2>
+<p>Implemented in <code>StudID_Name_MP_bonus.cpp</code>. Typing <code>r</code> at the prompt (now <code>Command [w/a/s/d/r]:</code>) plans and executes a route from the <i>current</i> game state.</p>
+<table>
+<tr><th style="width:44%">Bonus requirement</th><th>Implementation</th></tr>
+<tr><td>Search order s, w, d, a</td><td><code>PATH_CMD[] = {'s','w','d','a'}</code>; the BFS expands the directions in that order.</td></tr>
+<tr><td>Reach the exit within remaining stamina</td><td>Expansion stops at depth = current stamina; <code>E</code> is terminal (entering it ends the expedition).</td></tr>
+<tr><td>Maximum collected value within the remaining capacity</td><td>Every treasure / drop is a branch: take (only if <code>weight + item &le; capacity</code>) or leave; the goal state with the highest total value wins.</td></tr>
+<tr><td>Weapons picked up; monsters only entered with the weapon</td><td>Weapons are picked up on contact (forced transition); a monster cell is entered only if the weapon is held, which also defeats the monster and exposes its drop.</td></tr>
+<tr><td>Same value &rarr; fewest steps &rarr; first found</td><td>BFS depth, then discovery order (Section 4.3).</td></tr>
+<tr><td>Uses the current state (position, stamina, weight, value, items, weapons, defeated monsters)</td><td>The start state is built from the live game variables; <code>origGrid</code> keeps the generated layout so that the planner does not depend on what was already picked up.</td></tr>
+<tr><td>Automatic item selection</td><td>The plan records one take/leave flag per step; during execution <i>Item collected.</i> or <i>Auto mode left it here.</i> is printed without any y/n prompt.</td></tr>
+<tr><td>Output format</td><td><i>Auto Pathfinding Mode</i>, <i>Best reachable value / Expected backpack weight / Route length / Route</i>, <i>Auto Step X / L: C</i> before each move, map and status after each move, <i>No route to the exit was found from the current state.</i></td></tr>
+</table>
+
+<figure><svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" role="img" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" style="width:100%;height:auto"><defs><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2b4c7e"/></marker></defs><rect x="30" y="22" width="222" height="34" fill="#e3ecf8" stroke="#2b4c7e" stroke-width="1.2"/><text x="141" y="36" text-anchor="middle" font-size="10" fill="#111">cell = row*16 + col</text><text x="141" y="50" text-anchor="middle" font-size="9" fill="#555">8 bits</text><rect x="252" y="22" width="83" height="34" fill="#e8f3e5" stroke="#2b4c7e" stroke-width="1.2"/><text x="293.5" y="36" text-anchor="middle" font-size="10" fill="#111">weapons z v w</text><text x="293.5" y="50" text-anchor="middle" font-size="9" fill="#555">3 bits</text><rect x="335" y="22" width="83" height="34" fill="#fdeedd" stroke="#2b4c7e" stroke-width="1.2"/><text x="376.5" y="36" text-anchor="middle" font-size="10" fill="#111">defeated Z V W</text><text x="376.5" y="50" text-anchor="middle" font-size="9" fill="#555">3 bits</text><rect x="418" y="22" width="250" height="34" fill="#f1e6f7" stroke="#2b4c7e" stroke-width="1.2"/><text x="543" y="36" text-anchor="middle" font-size="10" fill="#111">items taken (6 treasures + 3 drops)</text><text x="543" y="50" text-anchor="middle" font-size="9" fill="#555">9 bits</text><text x="30" y="14" text-anchor="start" font-size="11" fill="#111">One search state, packed into 23 bits</text><text x="349" y="74" text-anchor="middle" font-size="10" fill="#444">weight and value = f(items taken)   |   steps used = BFS depth   |   stamina left = stamina - depth</text><text x="30" y="104" text-anchor="start" font-size="11" fill="#111">BFS expansion, directions in the order  s, w, d, a  (discovery number in each node)</text><circle cx="70" cy="190" r="14" fill="#ffffff" stroke="#2b4c7e" stroke-width="1.2"/><text x="70" y="193.5" text-anchor="middle" font-size="10">#0</text><text x="70" y="220" text-anchor="middle" font-size="9" fill="#444">start state</text><path d="M84,190 L216,140" fill="none" stroke="#2b4c7e" stroke-width="1.2"/><text x="146" y="161" text-anchor="middle" font-size="10" fill="#111">s</text><circle cx="230" cy="140" r="14" fill="#ffffff" stroke="#2b4c7e" stroke-width="1.2"/><text x="230" y="143.5" text-anchor="middle" font-size="10">#1</text><path d="M84,190 L216,190" fill="none" stroke="#2b4c7e" stroke-width="1.2"/><text x="146" y="186" text-anchor="middle" font-size="10" fill="#111">w</text><circle cx="230" cy="190" r="14" fill="#ffffff" stroke="#2b4c7e" stroke-width="1.2"/><text x="230" y="193.5" text-anchor="middle" font-size="10">#2</text><path d="M84,190 L216,240" fill="none" stroke="#2b4c7e" stroke-width="1.2"/><text x="146" y="211" text-anchor="middle" font-size="10" fill="#111">d</text><circle cx="230" cy="240" r="14" fill="#ffffff" stroke="#2b4c7e" stroke-width="1.2"/><text x="230" y="243.5" text-anchor="middle" font-size="10">#3</text><path d="M82,198 L216,276" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="4 3"/><circle cx="230" cy="282" r="14" fill="#eee" stroke="#999" stroke-width="1.2"/><text x="230" y="285.5" text-anchor="middle" font-size="10">a</text><text x="262" y="286" text-anchor="start" font-size="9" fill="#444">wall - not enqueued</text><path d="M244,140 L386,118" fill="none" stroke="#2b4c7e" stroke-width="1.2"/><circle cx="400" cy="118" r="14" fill="#ffffff" stroke="#2b4c7e" stroke-width="1.2"/><text x="400" y="121.5" text-anchor="middle" font-size="10">#4</text><path d="M244,140 L386,150" fill="none" stroke="#2b4c7e" stroke-width="1.2"/><circle cx="400" cy="150" r="14" fill="#ffffff" stroke="#2b4c7e" stroke-width="1.2"/><text x="400" y="153.5" text-anchor="middle" font-size="10">#5</text><path d="M244,190 L386,182" fill="none" stroke="#2b4c7e" stroke-width="1.2"/><circle cx="400" cy="182" r="14" fill="#ffffff" stroke="#2b4c7e" stroke-width="1.2"/><text x="400" y="185.5" text-anchor="middle" font-size="10">#6</text><path d="M244,240 L386,214" fill="none" stroke="#2b4c7e" stroke-width="1.2"/><circle cx="400" cy="214" r="14" fill="#ffffff" stroke="#2b4c7e" stroke-width="1.2"/><text x="400" y="217.5" text-anchor="middle" font-size="10">#7</text><path d="M244,240 L386,246" fill="none" stroke="#2b4c7e" stroke-width="1.2"/><circle cx="400" cy="246" r="14" fill="#ffffff" stroke="#2b4c7e" stroke-width="1.2"/><text x="400" y="249.5" text-anchor="middle" font-size="10">#8</text><text x="445" y="122" text-anchor="start" font-size="9" fill="#444">#1&#x27;s children come first,</text><text x="445" y="134" text-anchor="start" font-size="9" fill="#444">then #2&#x27;s, then #3&#x27;s ...</text><rect x="470" y="160" width="215" height="112" rx="6" fill="#f7f9fc" stroke="#2b4c7e"/><text x="478" y="178" text-anchor="start" font-size="10" fill="#111">Queue order within one depth =</text><text x="478" y="191" text-anchor="start" font-size="10" fill="#111">alphabetical order of the routes</text><text x="478" y="204" text-anchor="start" font-size="10" fill="#111">(s &lt; w &lt; d &lt; a).</text><text x="478" y="217" text-anchor="start" font-size="10" fill="#111"></text><text x="478" y="230" text-anchor="start" font-size="10" fill="#111">Goal choice: highest value,</text><text x="478" y="243" text-anchor="start" font-size="10" fill="#111">then fewest steps (smaller depth),</text><text x="478" y="256" text-anchor="start" font-size="10" fill="#111">then earliest discovered.</text></svg>
+<figcaption><b>Figure 3.</b> The planner's state and the BFS discovery order. Each node is one state; the numbers are the order in which the BFS discovers them, which equals the alphabetical order of the routes that reach them.</figcaption></figure>
+
+<h3>Pseudocode of the planner</h3>
+<pre class="code">planRoute():
+    start = pack(playerCell, weaponsHeld, monstersDefeated, itemsTaken);  queue = [start];  seen[start] = true
+    best = none
+    for each entry e of the queue, in order:
+        if cell(e) is the exit  or  depth(e) == stamina:  continue
+        for dir in (s, w, d, a):
+            cell' = neighbour of cell(e) in dir;  skip if outside the map or a wall
+            if cell' holds a monster:   skip unless its weapon is held;  mark it defeated;  item = its drop
+            if cell' holds a weapon:    mark the weapon as held
+            if cell' holds a treasure:  item = that treasure
+            options = [ leave ]
+            if item exists and is not yet taken and weight(items) + weight(item) &lt;= capacity:
+                options = [ take, leave ]                 # "take" is tried first
+            for option in options:
+                s' = pack(cell', weapons', defeated', items' )
+                if not seen[s']:  seen[s'] = true;  enqueue(s', parent = e, move = dir, tookItem = option == take)
+                    if cell' is the exit and  (value(items') &gt; bestValue  or  equal value and depth+1 &lt; bestDepth):
+                        best = this entry
+    if best is none: return "no route"
+    follow the parent links from best back to the start  ->  route and take/leave flags</pre>
+
+<h3>Sample runs (real output)</h3>
+<figure><div class="cols">
+<div><div class="termwrap "><div class="termtitle">&#x27;r&#x27; at the start (seed 12345, capacity 30)</div><pre class="term">Command [w/a/s/d/r]: <span class="in">r</span>
+Auto Pathfinding Mode
+Best reachable value: 170
+Expected backpack weight: 13 / 30
+Route length: 40
+Route: sdsswddddddddaaasasssssssdddsssssddddddd
+Auto Step 1 / 40: s
+<span class="marker">   ... 2 more uneventful moves (d s) ...</span>
+Auto Step 4 / 40: s
+You found Treasure 2.
+Weight: 4, Value: 60
+Item collected.
+Auto Step 5 / 40: w
+<span class="marker">   ... 7 more uneventful moves (d d d d d d d) ...</span>
+Auto Step 13 / 40: d
+You found Treasure 6.
+Weight: 6, Value: 70
+Item collected.
+Auto Step 14 / 40: a
+<span class="marker">   ... 4 more uneventful moves (a a s a) ...</span>
+Auto Step 19 / 40: s
+You found Treasure 3.
+Weight: 2, Value: 30
+Item collected.
+Auto Step 20 / 40: s
+Auto Step 21 / 40: s
+You found Treasure 5.
+Weight: 1, Value: 10
+Item collected.
+Auto Step 22 / 40: s
+You picked up weapon v.
+Auto Step 23 / 40: s
+<span class="marker">   ... 16 more uneventful moves (s s d d d s s s s s d d d d d d) ...</span>
+Auto Step 40 / 40: d
+====================================
+Tomb Explorer Result
+====================================
+You escaped the tomb.
+Final Value: 170
+Theoretical Max Value: 405
+Mission Completeness: 42.0%
+Backpack Weight: 13 / 30
+Hearts: 3 / 3
+Stamina: 5 / 45
+Weapons: z[N] v[Y] w[N]
+Total Steps: 40
+====================================</pre></div></div>
+<div><div class="termwrap "><div class="termtitle">&#x27;r&#x27; pressed after taking Treasure 6 by hand</div><pre class="term">Command [w/a/s/d/r]: <span class="in">s</span>
+<span class="marker">   ... 9 more uneventful moves (d s d d d d d d d) ...</span>
+Command [w/a/s/d/r]: <span class="in">d</span>
+You found Treasure 6.
+Weight: 6, Value: 70
+Take it [y/n]: <span class="in">y</span>
+Item collected.
+Command [w/a/s/d/r]: <span class="in">r</span>
+Auto Pathfinding Mode
+Best reachable value: 110
+Expected backpack weight: 9 / 30
+Route length: 27
+Route: aaasasssssssdddsssssddddddd
+Auto Step 1 / 27: a
+<span class="marker">   ... 4 more uneventful moves (a a s a) ...</span>
+Auto Step 6 / 27: s
+You found Treasure 3.
+Weight: 2, Value: 30
+Item collected.
+Auto Step 7 / 27: s
+Auto Step 8 / 27: s
+You found Treasure 5.
+Weight: 1, Value: 10
+Item collected.
+Auto Step 9 / 27: s
+You picked up weapon v.
+Auto Step 10 / 27: s
+<span class="marker">   ... 16 more uneventful moves (s s d d d s s s s s d d d d d d) ...</span>
+Auto Step 27 / 27: d
+====================================
+Tomb Explorer Result
+====================================
+You escaped the tomb.
+Final Value: 110
+Theoretical Max Value: 405
+Mission Completeness: 27.2%
+Backpack Weight: 9 / 30
+Hearts: 3 / 3
+Stamina: 7 / 45
+Weapons: z[N] v[Y] w[N]
+Total Steps: 38
+====================================</pre></div></div>
+</div>
+<figcaption><b>Figure 4.</b> Left: <code>r</code> at the start, seed 12345. The planner picks Treasures 2, 6, 3 and 5 (value 170, weight 13 / 30) with a 40-step route; no prompts appear, items on the route are simply collected. The map and status that follow every step are omitted. Right: after taking Treasure 6 by hand, <code>r</code> plans from the <i>current</i> state: less stamina is left, so the best reachable value is now 110 with a 27-step route.</figcaption></figure>
+<figure><div class="cols">
+<div><div class="termwrap "><div class="termtitle">seed 1, capacity 30: weapon -&gt; monster -&gt; drop</div><pre class="term">Command [w/a/s/d/r]: <span class="in">r</span>
+Auto Pathfinding Mode
+Best reachable value: 320
+Expected backpack weight: 21 / 30
+Route length: 54
+Route: sdddddssssssdsdddwdwwdddsssaddssassaaaassdawwddsdsdsdd
+<span class="marker">   ... steps 1-12 omitted ...</span>
+Auto Step 13 / 54: d
+You picked up weapon z.
+Auto Step 14 / 54: s
+<span class="marker">   ... 8 more uneventful moves (d d d w d w w d) ...</span>
+Auto Step 23 / 54: d
+You defeated monster Z.
+You found Monster Z drop.
+Weight: 2, Value: 40
+Item collected.
+<span class="marker">   ... steps 24-53 omitted ...</span>
+Auto Step 54 / 54: d
+====================================
+Tomb Explorer Result
+====================================
+You escaped the tomb.
+Final Value: 320
+Theoretical Max Value: 405
+Mission Completeness: 79.0%
+Backpack Weight: 21 / 30
+Hearts: 3 / 3
+Stamina: 0 / 54
+Weapons: z[Y] v[Y] w[Y]
+Total Steps: 54
+====================================</pre></div></div>
+<div><div class="termwrap "><div class="termtitle">seed 8: no route</div><pre class="term">Command [w/a/s/d/r]: <span class="in">r</span>
+Auto Pathfinding Mode
+No route to the exit was found from the current state.
+Command [w/a/s/d/r]: <span class="in"></span></pre></div>
+<p class="small">Seed 8: the exit cannot be reached without crossing a monster whose weapon is not available, so the mode reports that no route exists and returns to manual play (the map, status and the prompt are printed again).</p>
+<div class="termwrap "><div class="termtitle">an item the planner leaves behind</div><pre class="term">capacity 8, seed 1:
+Best reachable value: 140
+Expected backpack weight: 8 / 8
+<span class="marker">   ...</span>
+Auto Step 5 / 44: d
+You found Treasure 1.
+Weight: 3, Value: 50
+Auto mode left it here.</pre></div>
+<p class="small">With a backpack of capacity 8 the best selection is worth 140 and fills it exactly; the planner walks over Treasure 1 (weight 3, value 50) and leaves it, because taking it would make a better combination impossible.</p></div>
+</div>
+<figcaption><b>Figure 5.</b> Left: a run where the best route picks up a weapon, defeats a monster with it and collects the monster's drop automatically (seed 1, capacity 30). Right: the no-route case, and an item that is left on purpose.</figcaption></figure>
+
+<!-- ================================================================== 6 -->
+<h2>6. Thoughts and suggestions</h2>
+<h3>What the project teaches well</h3>
+<ul>
+<li>Deterministic pseudo-randomness: reproducing a dungeon from a seed forces precise reading of an algorithm, because one different <code>%</code> changes everything.</li>
+<li>Two classic searches used for what they are good at: BFS for shortest distance and reachability, DFS for exhaustive-but-pruned selection (knapsack).</li>
+<li>In the bonus, the move from "enumerate paths" to "search states" is a genuine modelling step: choosing what the state must contain, and proving that nothing else is needed.</li>
+</ul>
+<h3>Suggestions for the specification</h3>
+<ol>
+<li>State how the random number becomes the 40% wall probability (for example <code>% 100 &lt; 40</code>). This single sentence decides whether every map is right.</li>
+<li>Provide one complete worked example: a seed with the resulting map, D, maximum stamina and the first screens, so students can check their generator before building the rest.</li>
+<li>Say whether prompts end with a newline or a space, and whether the map and status are redisplayed after an invalid command or a wall bump.</li>
+<li>Define the order of the end-of-move checks (item prompt on the last stamina point, stamina and hearts reaching 0 together).</li>
+<li>Clarify "brute force": Section 11 asks for a DFS over all 2<sup>9</sup> combinations, which is itself exhaustive; the wording could say which exhaustive searches are allowed.</li>
+<li>Bonus samples contain blank lines between the printed lines; saying whether those are real output (or only the document's spacing) would remove a guess.</li>
+</ol>
+<div class="box warn"><b>Student's own thoughts.</b> <span class="fill">[Student: your own reflections on the assignment: what was hard for you, what you learned, what you would do differently.]</span></div>
+
+<!-- ================================================================== appendix -->
+<h2>Appendix A. Control flow and pseudocode of the basic program</h2>
+<pre class="code">buildDungeon():
+    repeat
+        for r in 0..15, c in 0..15:  grid[r][c] = (getRandomNum() % 100 &lt; 40) ? '#' : '.'
+        grid[0][0] = 'S';  grid[15][15] = 'E'
+        D = bfs(0,0)                         # fills reachable[][] ; returns dist to E or -1
+    until D &gt;= 0                             # the random stream is NOT reset between attempts
+    for symbol in "123456ZVWzvw":
+        repeat  row = getRandomNum() % 16;  col = getRandomNum() % 16
+        until reachable[row][col] and grid[row][col] == '.'
+        grid[row][col] = symbol
+    maxStamina = ceil(1.5 * D)
+
+searchBestValue(i, weight, value):           # recursive DFS, items 0..8
+    best = max(best, value)
+    if i == 9 or value + (sum of positive values of items i..8) &lt;= best:  return
+    if weight + w[i] &lt;= capacity:  searchBestValue(i+1, weight + w[i], value + v[i])    # take
+    searchBestValue(i+1, weight, value)                                                  # skip
+
+handleMove(cmd):
+    (nr,nc) = player + direction(cmd)
+    if outside the map: print "You cannot move outside the map." ; return        # free
+    if wall:            print "You hit a wall." ; return                          # free
+    stamina--;  steps++
+    if monster at (nr,nc) and its weapon is missing:
+        hearts--;  print "Monster X blocked you." ...;  if hearts == 0 -> lose;  elif stamina == 0 -> lose;  return
+    move the player
+    if monster: print "You defeated monster X.";  cell becomes its drop
+    if weapon:  pick it up;  cell becomes '.'
+    if treasure / drop:  offerItem()         # ask y/n until valid; capacity check
+    if cell is the exit: win   elif stamina == 0: lose
+
+main():
+    read seed, capacity, 9 weight/value pairs;  buildDungeon();  theoreticalMax = DFS
+    while game running:  print map + status;  read command;  w/a/s/d -> handleMove ; (r -> auto mode) ; else "Invalid command."
+    print map + status + result block</pre>
+
+<figure style="max-width:600px;margin-left:auto;margin-right:auto"><svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" role="img" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" style="width:100%;height:auto"><defs><marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2b4c7e"/></marker></defs><rect x="7" y="35" width="150" height="50" rx="6" fill="#f2f5fa" stroke="#2b4c7e" stroke-width="1.2"/><text text-anchor="middle"><tspan x="82" y="57.5">seed mod 2^31</tspan><tspan x="82" y="70.5">rngState, getRandomNum()</tspan></text><rect x="183" y="35" width="130" height="50" rx="6" fill="#f2f5fa" stroke="#2b4c7e" stroke-width="1.2"/><text text-anchor="middle"><tspan x="248" y="51">Fill 16x16 cells</tspan><tspan x="248" y="64">40% wall / 60% path</tspan><tspan x="248" y="77">(left-right, top-bottom)</tspan></text><rect x="338" y="35" width="120" height="50" rx="6" fill="#f2f5fa" stroke="#2b4c7e" stroke-width="1.2"/><text text-anchor="middle"><tspan x="398" y="57.5">Force S = (0,0)</tspan><tspan x="398" y="70.5">and E = (15,15)</tspan></text><rect x="488" y="35" width="120" height="50" rx="6" fill="#f2f5fa" stroke="#2b4c7e" stroke-width="1.2"/><text text-anchor="middle"><tspan x="548" y="57.5">BFS from (0,0)</tspan><tspan x="548" y="70.5">reachable[][], dist[][]</tspan></text><polygon points="660,32 700,60 660,88 620,60" fill="#fff4cc" stroke="#9a7b00" stroke-width="1.2"/><text text-anchor="middle"><tspan x="660" y="58">Exit</tspan><tspan x="660" y="70">reached?</tspan></text><path d="M157,60 L183,60" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar1)"/><path d="M313,60 L338,60" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar1)"/><path d="M458,60 L488,60" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar1)"/><path d="M608,60 L620,60" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar1)"/><path d="M660,32 L660,10 L248,10 L248,35" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar1)"/><text x="455" y="7" text-anchor="middle" font-size="10" fill="#444">no: reject, generate the next dungeon from the SAME random stream</text><path d="M660,88 L660,150" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar1)"/><text x="673" y="122" text-anchor="start" font-size="10" fill="#444">yes</text><rect x="380" y="134" width="270" height="52" rx="6" fill="#f2f5fa" stroke="#2b4c7e" stroke-width="1.2"/><text text-anchor="middle"><tspan x="515" y="157.5">Place 1 2 3 4 5 6 Z V W z v w in this order:</tspan><tspan x="515" y="170.5">random cell must be reachable and &#x27;.&#x27;</tspan></text><path d="M380,160 L335,160" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar1)"/><rect x="55" y="134" width="280" height="52" rx="6" fill="#f2f5fa" stroke="#2b4c7e" stroke-width="1.2"/><text text-anchor="middle"><tspan x="195" y="157.5">D = dist(E)   =&gt;   Max stamina = ceil(1.5 D)</tspan><tspan x="195" y="170.5">Theoretical max value (recursive DFS)</tspan></text></svg><figcaption><b>Figure A1.</b> Dungeon generation (Section 3 of the PDF) as implemented in <code>buildDungeon()</code>.</figcaption></figure>
+<figure style="max-width:640px;margin-left:auto;margin-right:auto"><svg viewBox="0 0 720 660" xmlns="http://www.w3.org/2000/svg" role="img" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" style="width:100%;height:auto"><defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2b4c7e"/></marker></defs><rect x="75" y="8" width="230" height="44" rx="6" fill="#f2f5fa" stroke="#2b4c7e" stroke-width="1.2"/><text text-anchor="middle"><tspan x="190" y="27.5">Setup: read input, build dungeon,</tspan><tspan x="190" y="40.5">D -&gt; stamina, theoretical max</tspan></text><rect x="75" y="70" width="230" height="44" rx="6" fill="#f2f5fa" stroke="#2b4c7e" stroke-width="1.2"/><text text-anchor="middle"><tspan x="190" y="89.5">Print map + status</tspan><tspan x="190" y="102.5">Prompt: Command [w/a/s/d]:</tspan></text><polygon points="190,134 290,162 190,190 90,162" fill="#fff4cc" stroke="#9a7b00" stroke-width="1.2"/><text text-anchor="middle"><tspan x="190" y="160">valid command</tspan><tspan x="190" y="172">(w / a / s / d)?</tspan></text><polygon points="190,210 290,238 190,266 90,238" fill="#fff4cc" stroke="#9a7b00" stroke-width="1.2"/><text text-anchor="middle"><tspan x="190" y="236">inside map and</tspan><tspan x="190" y="248">not a wall?</tspan></text><rect x="90" y="290" width="200" height="32" rx="6" fill="#f2f5fa" stroke="#2b4c7e" stroke-width="1.2"/><text text-anchor="middle"><tspan x="190" y="310">stamina - 1,  steps + 1</tspan></text><polygon points="190,344 300,372 190,400 80,372" fill="#fff4cc" stroke="#9a7b00" stroke-width="1.2"/><text text-anchor="middle"><tspan x="190" y="370">monster here and</tspan><tspan x="190" y="382">its weapon missing?</tspan></text><rect x="65" y="425" width="250" height="50" rx="6" fill="#f2f5fa" stroke="#2b4c7e" stroke-width="1.2"/><text text-anchor="middle"><tspan x="190" y="447.5">step in; defeat monster (drop appears);</tspan><tspan x="190" y="460.5">pick up weapon; offer item [y/n]</tspan></text><polygon points="190,492 290,520 190,548 90,520" fill="#fff4cc" stroke="#9a7b00" stroke-width="1.2"/><text text-anchor="middle"><tspan x="190" y="524">cell is the exit E?</tspan></text><polygon points="190,566 290,594 190,622 90,594" fill="#fff4cc" stroke="#9a7b00" stroke-width="1.2"/><text text-anchor="middle"><tspan x="190" y="598">stamina = 0 ?</tspan></text><rect x="405" y="145" width="190" height="34" rx="6" fill="#f2f5fa" stroke="#2b4c7e" stroke-width="1.2"/><text text-anchor="middle"><tspan x="500" y="166">&quot;Invalid command.&quot;</tspan></text><rect x="405" y="218" width="190" height="40" rx="6" fill="#f2f5fa" stroke="#2b4c7e" stroke-width="1.2"/><text text-anchor="middle"><tspan x="500" y="235.5">border / wall message</tspan><tspan x="500" y="248.5">(no stamina, no step)</tspan></text><rect x="400" y="341" width="200" height="62" rx="6" fill="#fbe1e1" stroke="#a33" stroke-width="1.2"/><text text-anchor="middle"><tspan x="500" y="363">hearts - 1, &quot;Monster X blocked you&quot;,</tspan><tspan x="500" y="376">player stays;</tspan><tspan x="500" y="389">hearts = 0 or stamina = 0: LOSE</tspan></text><rect x="405" y="503" width="190" height="34" rx="6" fill="#dff3e3" stroke="#2e7d32" stroke-width="1.2"/><text text-anchor="middle"><tspan x="500" y="524">WIN: You escaped the tomb</tspan></text><rect x="405" y="577" width="190" height="34" rx="6" fill="#fbe1e1" stroke="#a33" stroke-width="1.2"/><text text-anchor="middle"><tspan x="500" y="598">LOSE: You ran out of stamina</tspan></text><path d="M190,52 L190,70" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><path d="M190,114 L190,134" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><path d="M190,190 L190,210" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><path d="M190,266 L190,290" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><path d="M190,322 L190,344" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><path d="M190,400 L190,425" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><path d="M190,475 L190,492" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><path d="M190,548 L190,566" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><text x="204" y="200" text-anchor="middle" font-size="10" fill="#444">yes</text><text x="204" y="276" text-anchor="middle" font-size="10" fill="#444">yes</text><text x="204" y="412" text-anchor="middle" font-size="10" fill="#444">no</text><text x="204" y="557" text-anchor="middle" font-size="10" fill="#444">no</text><path d="M290,162 L405,162" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><path d="M290,238 L405,238" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><path d="M300,372 L400,372" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><path d="M290,520 L405,520" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><path d="M290,594 L405,594" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><text x="348" y="155" text-anchor="middle" font-size="10" fill="#444">no</text><text x="348" y="231" text-anchor="middle" font-size="10" fill="#444">no</text><text x="350" y="365" text-anchor="middle" font-size="10" fill="#444">yes</text><text x="348" y="513" text-anchor="middle" font-size="10" fill="#444">yes</text><text x="348" y="587" text-anchor="middle" font-size="10" fill="#444">yes</text><path d="M595,162 L690,162" fill="none" stroke="#2b4c7e" stroke-width="1.2"/><path d="M595,238 L690,238" fill="none" stroke="#2b4c7e" stroke-width="1.2"/><path d="M600,372 L690,372" fill="none" stroke="#2b4c7e" stroke-width="1.2"/><path d="M690,372 L690,92 L305,92" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><path d="M190,622 L190,646 L30,646 L30,92 L75,92" fill="none" stroke="#2b4c7e" stroke-width="1.2" marker-end="url(#ar2)"/><text x="110" y="640" text-anchor="middle" font-size="10" fill="#444">no: next command</text></svg><figcaption><b>Figure A2.</b> Control flow of one command in the game loop (<code>main()</code> and <code>handleMove()</code>).</figcaption></figure>
+
+
+
+<h2>Appendix B. Function index</h2>
+<table>
+<tr><th style="width:27%">Function</th><th>Purpose</th></tr>
+<tr><td><code>seedRng, getRandomNum</code></td><td>pseudo-random generator from the PDF</td></tr>
+<tr><td><code>generateWalls, runBfs, placeObject, buildDungeon</code></td><td>dungeon generation, validation and object placement</td></tr>
+<tr><td><code>searchBestValue, computeTheoreticalMax</code></td><td>recursive DFS for the theoretical maximum value</td></tr>
+<tr><td><code>printMap, printStatus, printWeapons, printResult</code></td><td>all formatted output blocks</td></tr>
+<tr><td><code>offerItem, collectItem*</code></td><td>item prompt, capacity check, collection (*bonus file only)</td></tr>
+<tr><td><code>handleMove</code></td><td>one movement command: costs, monsters, weapons, drops, win/lose checks</td></tr>
+<tr><td><code>readSetup, main</code></td><td>input of the setup values and the game loop</td></tr>
+<tr><td><code>fillMaskTables, packState, pushState, planRoute, runAutoMode*</code></td><td>bonus: item-subset tables, state packing, BFS queue, planner, route execution (*bonus file only)</td></tr>
+</table>
+</body></html>
