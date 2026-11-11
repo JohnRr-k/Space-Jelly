@@ -4,6 +4,7 @@
 |---|---|
 | `StudID_Name_MP.cpp` | Basic version (submit as `StudID_Name_MP.cpp`) |
 | `StudID_Name_MP_bonus.cpp` | Basic + Automatic Pathfinding Mode, command `r` (submit separately) |
+| `report/StudID_Name_MP_report.html` / `.pdf` | Report draft (8 pages). **Not submission-ready until you fill the yellow fields** — see below |
 
 **Rename both files** to your real student ID and name before submitting (e.g. `115061600_Name_MP.cpp`).
 
@@ -48,6 +49,14 @@ which, and the replay follows that plan (`Item collected.` / `Auto mode left it 
 Independent Python re-implementations of the game and of the planner (different algorithm: set-based layers +
 backward marking of optimal states + greedy forward walk) were fed identical randomized input streams (invalid
 commands, wall/border bumps, monster hits, y/n edge cases, `r` pressed mid-game after items/weapons/heart loss).
-Transcripts matched byte-for-byte over 450 basic and 1 600 bonus games, also under ASan/UBSan.
+Transcripts matched byte-for-byte over 450 basic and 1 660 bonus games, also under ASan/UBSan.
 Both files compile warning-free with `-Wall -Wextra -Wpedantic -Wshadow -Wconversion` (bonus verified after the
 last edit; basic compiled clean as well).
+
+## Finishing the report
+`report/StudID_Name_MP_report.pdf` is a draft generated from `report/StudID_Name_MP_report.html`. Six places are highlighted in yellow
+(`class="fill"`): student ID, name, result of the course's public test cases, your review of each code part, your own account of how you used
+the AI, and your own reflections. Those must be your own, truthful words (the course treats undisclosed AI use as plagiarism).
+1. Edit the HTML in a text editor (search for `class="fill"`, replace the whole `<span>` with your text).
+2. Open it in Chrome/Edge → Print → *Save as PDF*, paper A4, enable *Background graphics*.
+3. Save as `<StudentID>_<Name>_MP_report.pdf` (PDF only — the course rejects `.doc/.docx`).
